@@ -8,7 +8,7 @@ CFLAGS = -std=c++11 -Wall
 SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
 # Source files
-SRCS = main.cpp
+SRCS = golf_game.cpp main.cpp
 
 # Executable name
 EXEC = golf-game

@@ -6,6 +6,7 @@ int main (int argc, char *argv[]) {
     Game game;
     while(game.isRunning()) {
         game.run();
+        game.render();
     }
 }
 

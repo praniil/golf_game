@@ -22,12 +22,16 @@ class Game{
         int golf_hole_pos_x, golf_hole_pos_y;
 
         //arrow
-        // sf::RectangleShape arrow;
+        sf::RectangleShape arrow;
+        float arrow_width, arrow_height;
 
         //dragging
         bool isDragging;
         sf::Vector2f dragStartPos;
         sf::Vector2f dragEndPos;
         sf::Vector2f golf_ball_velocity;
+
+
+        bool show_arrow;
         
 };

@@ -33,12 +33,14 @@ Game :: Game() {
     golf_ball_pos_y = 3 * golf_ball_diameter;
     golf_hole.setPosition(golf_hole_pos_x, golf_ball_pos_y);
 
-    //arrow attribut
-    // arrow.setSize(sf::Vector2f(5.0, 0.5));
-    // arrow.setFillColor(sf::Color::Black);
+    //arrow attribute
+    arrow_width = 2.0;
+    arrow_height = 20.0;
+    arrow.setSize(sf::Vector2f(arrow_width, arrow_height));
+    show_arrow = false;
 
-    // //arrow positioin
-    // arrow.setPosition(golf_ball.getPosition().x + 20.f, golf_ball.getPosition().y + 20.f);
+    arrow.setFillColor(sf::Color::Black);
+    // arrow.setPosition(golf_ball.getPosition().x + golf_ball_diameter / 2 + 3, golf_ball.getPosition().y - golf_ball_diameter - 12);
     //dragging attribute
     isDragging = false;
 
@@ -50,8 +52,16 @@ bool Game::isRunning() const{
 
 void Game::run() {
     while(game_window.isOpen()) {
+        if (show_arrow == true) {
+            arrow.setFillColor(sf::Color::Black);
+            arrow.setPosition(golf_ball.getPosition().x + golf_ball_diameter / 2 + 3, golf_ball.getPosition().y - golf_ball_diameter - 12);
+        } else {
+            arrow.setFillColor(sf::Color::Green);
+        }
+
         sf::Event event;
         while(game_window.pollEvent(event)) {
+
                 if (event.type == sf::Event::Closed) {
                     game_window.close();
                 }
@@ -65,6 +75,7 @@ void Game::run() {
                 
                 //for getting the start position of ball
                 if(event.type == sf::Event::MouseButtonPressed) {
+                    show_arrow = true;
                     if (event.mouseButton.button == sf::Mouse::Left) {
                         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
                         printf("mouse pos x: %f", mousePos.x);
@@ -78,6 +89,7 @@ void Game::run() {
                 
                 //for getting the end position of the ball after drag
                 if (event.type == sf::Event::MouseButtonReleased) {
+                    show_arrow = false;
                     if (event.mouseButton.button == sf::Mouse::Left) {
                         if (isDragging) {
                             dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
@@ -101,15 +113,16 @@ void Game::update() {
         golf_ball.move(golf_ball_velocity);
         printf("2");
         golf_ball_velocity *= damping;
+        show_arrow = false;
     }
 }
 
 void Game::render() {
     printf("3");
     game_window.clear(sf::Color::Green);
+    game_window.draw(arrow);
     game_window.draw(golf_ball);
     game_window.draw(golf_hole);
-    // game_window.draw(arrow);
     game_window.display();
 }
 

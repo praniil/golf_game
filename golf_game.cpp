@@ -2,11 +2,13 @@
 #include "golf_game.h"
 #include<stdio.h>
 #include<iostream>
+#include<cmath>
 
 //golbal variable
 int golf_ball_diameter = 10;
 const float dragscale = 0.2f;
 const float damping = 0.99f;
+int drag_angle;
 
 Game :: Game() {
     //game window config
@@ -29,8 +31,8 @@ Game :: Game() {
     golf_hole.setPointCount(30);
 
     //golf hole position
-    golf_hole_pos_x = game_window.getSize().x /2 + golf_ball_diameter;
-    golf_ball_pos_y = 3 * golf_ball_diameter;
+    golf_hole_pos_x = 20 * golf_ball_diameter;
+    golf_ball_pos_y = game_window.getSize().y - 10 * golf_ball_diameter;
     golf_hole.setPosition(golf_hole_pos_x, golf_ball_pos_y);
 
     //arrow attribute
@@ -95,7 +97,12 @@ void Game::run() {
                             dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
                             printf("drag end pos: %f", dragEndPos.x); 
                             sf::Vector2f distance_drag = dragEndPos - dragStartPos;
+                            // float base = golf_ball.getPosition().x - distance_drag.x;
+                            // drag_angle = acos(base / sqrt(pow(golf_ball.getPosition().x - distance_drag.x, 2) + pow(golf_ball.getPosition().y - distance_drag.y, 2)));
+                            drag_angle = (atan2(distance_drag.y, distance_drag.x) * 180.f / 3.14f) - 90.f;
+                            std::cout << "angle: " << drag_angle << std::endl;
                             golf_ball_velocity = -distance_drag * dragscale;
+                            arrow.rotate(drag_angle);
                             isDragging = false;
                         }
                     }
@@ -114,6 +121,18 @@ void Game::update() {
         printf("2");
         golf_ball_velocity *= damping;
         show_arrow = false;
+        handle_collision();
+    }
+}
+
+void Game::handle_collision () {
+    if (golf_ball.getGlobalBounds().intersects(golf_hole.getGlobalBounds())) {
+        sf::Vector2f direction = golf_hole.getPosition() - golf_ball.getPosition();
+        float length = sqrt(pow(direction.x, 2) + pow(direction.y, 2));
+        direction /= length;
+        golf_ball_velocity = direction * 2.0f;
+        golf_ball.setPosition(golf_hole.getPosition());
+        golf_ball.setRadius(0.04 * golf_ball.getRadius());
     }
 }
 

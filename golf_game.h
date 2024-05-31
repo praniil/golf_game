@@ -8,6 +8,7 @@ class Game{
         void run();
         void render();
         void update();
+        void handle_collision();
     
     private:
         //window

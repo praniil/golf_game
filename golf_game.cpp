@@ -121,6 +121,7 @@ void Game::update() {
         printf("2");
         golf_ball_velocity *= damping;
         show_arrow = false;
+        handle_wall_collision();
         handle_collision();
     }
 }
@@ -133,6 +134,15 @@ void Game::handle_collision () {
         golf_ball_velocity = direction * 2.0f;
         golf_ball.setPosition(golf_hole.getPosition());
         golf_ball.setRadius(0.04 * golf_ball.getRadius());
+    }
+}
+
+void Game::handle_wall_collision() {
+    if (golf_ball.getPosition().x <= 0 || golf_ball.getPosition().x >= game_window.getSize().x - golf_ball_diameter) {
+        golf_ball_velocity.x = -golf_ball_velocity.x;
+    } 
+    if (golf_ball.getPosition().y <= 0 || golf_ball.getPosition().y >= game_window.getSize().y - golf_ball_diameter) {
+        golf_ball_velocity.y = -golf_ball_velocity.y;
     }
 }
 

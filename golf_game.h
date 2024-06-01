@@ -9,6 +9,7 @@ class Game{
         void render();
         void update();
         void handle_collision();
+        void handle_wall_collision();
     
     private:
         //window

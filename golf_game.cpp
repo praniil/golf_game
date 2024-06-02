@@ -35,17 +35,13 @@ Game :: Game() {
     golf_ball_pos_y = game_window.getSize().y - 10 * golf_ball_diameter;
     golf_hole.setPosition(golf_hole_pos_x, golf_ball_pos_y);
 
-    //arrow attribute
-    arrow_width = 2.0;
-    arrow_height = 20.0;
-    arrow.setSize(sf::Vector2f(arrow_width, arrow_height));
-    show_arrow = false;
-
-    arrow.setFillColor(sf::Color::Black);
-    // arrow.setPosition(golf_ball.getPosition().x + golf_ball_diameter / 2 + 3, golf_ball.getPosition().y - golf_ball_diameter - 12);
     //dragging attribute
     isDragging = false;
 
+}
+
+float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
+    return std::sqrt(std::pow(p2.x - p1.x, 2) + std::pow(p2.y - p1.y, 2));
 }
 
 bool Game::isRunning() const{
@@ -91,18 +87,12 @@ void Game::run() {
                 
                 //for getting the end position of the ball after drag
                 if (event.type == sf::Event::MouseButtonReleased) {
-                    show_arrow = false;
                     if (event.mouseButton.button == sf::Mouse::Left) {
                         if (isDragging) {
                             dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
                             printf("drag end pos: %f", dragEndPos.x); 
                             sf::Vector2f distance_drag = dragEndPos - dragStartPos;
-                            // float base = golf_ball.getPosition().x - distance_drag.x;
-                            // drag_angle = acos(base / sqrt(pow(golf_ball.getPosition().x - distance_drag.x, 2) + pow(golf_ball.getPosition().y - distance_drag.y, 2)));
-                            drag_angle = (atan2(distance_drag.y, distance_drag.x) * 180.f / 3.14f) - 90.f;
-                            std::cout << "angle: " << drag_angle << std::endl;
-                            golf_ball_velocity = -distance_drag * dragscale;
-                            arrow.rotate(drag_angle);
+                            golf_ball_velocity = -distance_drag * dragscale;                         
                             isDragging = false;
                         }
                     }
@@ -115,18 +105,18 @@ void Game::run() {
 }
 
 void Game::update() {
+
     if(!isDragging) {
-        printf("1");
         golf_ball.move(golf_ball_velocity);
-        printf("2");
         golf_ball_velocity *= damping;
-        show_arrow = false;
+    std::cout << golf_ball_velocity.x << golf_ball_velocity.y << std::endl;
         handle_wall_collision();
         handle_collision();
     }
 }
 
 void Game::handle_collision () {
+    /*
     if (golf_ball.getGlobalBounds().intersects(golf_hole.getGlobalBounds())) {
         sf::Vector2f direction = golf_hole.getPosition() - golf_ball.getPosition();
         float length = sqrt(pow(direction.x, 2) + pow(direction.y, 2));
@@ -134,6 +124,29 @@ void Game::handle_collision () {
         golf_ball_velocity = direction * 2.0f;
         golf_ball.setPosition(golf_hole.getPosition());
         golf_ball.setRadius(0.04 * golf_ball.getRadius());
+    } 
+    */
+    sf::Vector2f golf_ball_center = golf_ball.getPosition() + sf::Vector2f(golf_ball.getRadius(), golf_ball.getRadius());
+    sf::Vector2f golf_hole_center = golf_hole.getPosition() + sf::Vector2f(golf_hole.getRadius(), golf_hole.getRadius());
+    float distance = distance_calculator(golf_ball_center, golf_hole_center);
+    if (distance < golf_hole.getRadius() - golf_ball.getRadius() / 4) {
+        if(golf_ball_velocity.x < 2.0f) {
+            sf::Vector2f direction = golf_hole_center - golf_ball_center;
+            direction /= distance;
+            golf_ball_velocity = direction * 2.0f;
+            // golf_ball_velocity.y = 0.2 * golf_ball_velocity.x;
+            // golf_ball_velocity.x = 0.2 * golf_ball_velocity.x;
+            if (golf_ball_velocity.x < 0.4f || golf_ball_velocity.y < 0.4f) {
+                golf_ball_velocity.x = 0.0f;
+                golf_ball_velocity.y = 0.0f;
+            }
+        golf_ball.setPosition(golf_hole.getPosition() + sf::Vector2f(golf_ball.getRadius() - 3, golf_ball.getRadius() - 3));
+        // golf_ball.setFillColor(sf::Color::Black);
+        } else {
+            sf::Vector2f direction = golf_hole_center - golf_ball_center;
+            direction /= distance;
+            golf_ball_velocity = direction * 2.0f;
+        }
     }
 }
 
@@ -147,11 +160,9 @@ void Game::handle_wall_collision() {
 }
 
 void Game::render() {
-    printf("3");
     game_window.clear(sf::Color::Green);
-    game_window.draw(arrow);
-    game_window.draw(golf_ball);
     game_window.draw(golf_hole);
+    game_window.draw(golf_ball);
     game_window.display();
 }
 

@@ -10,6 +10,7 @@ class Game{
         void update();
         void handle_collision();
         void handle_wall_collision();
+        float distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2);
     
     private:
         //window

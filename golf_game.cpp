@@ -39,12 +39,12 @@ Game :: Game() {
     isDragging = false;
 
     //arrow attributes
-    arrow_width = 3.0f;
-    arrow_height = 14.0f;
+    arrow_width = 2.0f;
+    arrow_height = 20.0f;
     arrow.setSize(sf::Vector2f(arrow_width, arrow_height));
     arrow.setFillColor(sf::Color::Blue);
-    arrow.setOrigin(0, arrow.getSize().y / 2);
-
+    arrow.setOrigin(-0, arrow.getSize().y );
+    arrow.setOutlineThickness(0);
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -109,16 +109,17 @@ void Game::run() {
                     }
                 }
         } 
-            //updating the position of the ball
-            update();
-            render();
+        //updating the position of the ball
+        update();
+        render();
     }
 }
 
 void Game::update_arrow() {
     arrow.setFillColor(sf::Color::Black);
-    arrow.setPosition(golf_ball.getPosition().x + golf_ball_diameter / 2 + 3, golf_ball.getPosition().y - golf_ball_diameter - 12);
-    std :: cout << "set" << std::endl;
+    arrow.setPosition(golf_ball.getPosition().x + golf_ball.getRadius() -1, golf_ball.getPosition().y + golf_ball.getRadius() -1);
+    std::cout << "golf ball pos x: " << golf_ball.getPosition().x << std::endl;
+    std::cout << "arrow posn x: " << arrow.getPosition().x << std::endl;
     sf::Vector2f currentMousePosition = game_window.mapPixelToCoords(sf::Mouse::getPosition(game_window));
     sf::Vector2f dragVector = dragStartPos - currentMousePosition;
     sf::Vector2f normalizedDragVector = normalize(dragVector);
@@ -167,10 +168,11 @@ void Game::handle_wall_collision() {
 
 void Game::render() {
     game_window.clear(sf::Color::Green);
-    game_window.draw(golf_hole);
+    game_window.draw(golf_ball);
     if(isDragging) {
+        std :: cout << "true" << std::endl;
         game_window.draw(arrow);
     }
-    game_window.draw(golf_ball);
+    game_window.draw(golf_hole);
     game_window.display();
 }

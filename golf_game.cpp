@@ -32,16 +32,34 @@ Game :: Game() {
 
     //golf hole position
     golf_hole_pos_x = 20 * golf_ball_diameter;
-    golf_ball_pos_y = game_window.getSize().y - 10 * golf_ball_diameter;
-    golf_hole.setPosition(golf_hole_pos_x, golf_ball_pos_y);
+    golf_hole_pos_y = game_window.getSize().y / 10;
+    golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
 
     //dragging attribute
     isDragging = false;
+
+    //arrow attributes
+    arrow_width = 3.0f;
+    arrow_height = 14.0f;
+    arrow.setSize(sf::Vector2f(arrow_width, arrow_height));
+    arrow.setFillColor(sf::Color::Blue);
+    arrow.setOrigin(0, arrow.getSize().y / 2);
 
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
     return std::sqrt(std::pow(p2.x - p1.x, 2) + std::pow(p2.y - p1.y, 2));
+}
+
+sf::Vector2f Game::normalize(sf::Vector2f& source) {
+    //applying pythagoras theorem
+    //calculating the unit vector
+    float length = sqrt(pow(source.x, 2) + pow(source.y, 2));
+    if (length != 0) {
+        return sf::Vector2f(source.x / length, source.y/ length);
+    } else {
+        return source;
+    }
 }
 
 bool Game::isRunning() const{
@@ -50,13 +68,6 @@ bool Game::isRunning() const{
 
 void Game::run() {
     while(game_window.isOpen()) {
-        if (show_arrow == true) {
-            arrow.setFillColor(sf::Color::Black);
-            arrow.setPosition(golf_ball.getPosition().x + golf_ball_diameter / 2 + 3, golf_ball.getPosition().y - golf_ball_diameter - 12);
-        } else {
-            arrow.setFillColor(sf::Color::Green);
-        }
-
         sf::Event event;
         while(game_window.pollEvent(event)) {
 
@@ -73,16 +84,17 @@ void Game::run() {
                 
                 //for getting the start position of ball
                 if(event.type == sf::Event::MouseButtonPressed) {
-                    show_arrow = true;
                     if (event.mouseButton.button == sf::Mouse::Left) {
                         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
-                        printf("mouse pos x: %f", mousePos.x);
                         if (golf_ball.getGlobalBounds().contains(mousePos)) {
                             isDragging = true;
                             dragStartPos = mousePos;
-                            printf("drag posn x: %f", dragStartPos.x);
                         }
                     }
+                }
+
+                if (isDragging) {
+                    update_arrow();
                 }
                 
                 //for getting the end position of the ball after drag
@@ -90,7 +102,6 @@ void Game::run() {
                     if (event.mouseButton.button == sf::Mouse::Left) {
                         if (isDragging) {
                             dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
-                            printf("drag end pos: %f", dragEndPos.x); 
                             sf::Vector2f distance_drag = dragEndPos - dragStartPos;
                             golf_ball_velocity = -distance_drag * dragscale;                         
                             isDragging = false;
@@ -104,12 +115,23 @@ void Game::run() {
     }
 }
 
+void Game::update_arrow() {
+    arrow.setFillColor(sf::Color::Black);
+    arrow.setPosition(golf_ball.getPosition().x + golf_ball_diameter / 2 + 3, golf_ball.getPosition().y - golf_ball_diameter - 12);
+    std :: cout << "set" << std::endl;
+    sf::Vector2f currentMousePosition = game_window.mapPixelToCoords(sf::Mouse::getPosition(game_window));
+    sf::Vector2f dragVector = dragStartPos - currentMousePosition;
+    sf::Vector2f normalizedDragVector = normalize(dragVector);
+    float angle = std::atan2(normalizedDragVector.y, normalizedDragVector.x) * 180 / M_PI;
+    arrow.setRotation(angle + 90);
+    
+}
+
 void Game::update() {
 
     if(!isDragging) {
         golf_ball.move(golf_ball_velocity);
         golf_ball_velocity *= damping;
-    std::cout << golf_ball_velocity.x << golf_ball_velocity.y << std::endl;
         handle_wall_collision();
         handle_collision();
     }
@@ -146,7 +168,9 @@ void Game::handle_wall_collision() {
 void Game::render() {
     game_window.clear(sf::Color::Green);
     game_window.draw(golf_hole);
+    if(isDragging) {
+        game_window.draw(arrow);
+    }
     game_window.draw(golf_ball);
     game_window.display();
 }
-

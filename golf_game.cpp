@@ -116,16 +116,6 @@ void Game::update() {
 }
 
 void Game::handle_collision () {
-    /*
-    if (golf_ball.getGlobalBounds().intersects(golf_hole.getGlobalBounds())) {
-        sf::Vector2f direction = golf_hole.getPosition() - golf_ball.getPosition();
-        float length = sqrt(pow(direction.x, 2) + pow(direction.y, 2));
-        direction /= length;
-        golf_ball_velocity = direction * 2.0f;
-        golf_ball.setPosition(golf_hole.getPosition());
-        golf_ball.setRadius(0.04 * golf_ball.getRadius());
-    } 
-    */
     sf::Vector2f golf_ball_center = golf_ball.getPosition() + sf::Vector2f(golf_ball.getRadius(), golf_ball.getRadius());
     sf::Vector2f golf_hole_center = golf_hole.getPosition() + sf::Vector2f(golf_hole.getRadius(), golf_hole.getRadius());
     float distance = distance_calculator(golf_ball_center, golf_hole_center);
@@ -134,14 +124,8 @@ void Game::handle_collision () {
             sf::Vector2f direction = golf_hole_center - golf_ball_center;
             direction /= distance;
             golf_ball_velocity = direction * 2.0f;
-            // golf_ball_velocity.y = 0.2 * golf_ball_velocity.x;
-            // golf_ball_velocity.x = 0.2 * golf_ball_velocity.x;
-            if (golf_ball_velocity.x < 0.4f || golf_ball_velocity.y < 0.4f) {
-                golf_ball_velocity.x = 0.0f;
-                golf_ball_velocity.y = 0.0f;
-            }
-        golf_ball.setPosition(golf_hole.getPosition() + sf::Vector2f(golf_ball.getRadius() - 3, golf_ball.getRadius() - 3));
-        // golf_ball.setFillColor(sf::Color::Black);
+            golf_ball.setPosition(golf_hole.getPosition() + sf::Vector2f(golf_ball.getRadius() - 3, golf_ball.getRadius() - 3));
+            golf_ball.setFillColor(sf::Color::Black);
         } else {
             sf::Vector2f direction = golf_hole_center - golf_ball_center;
             direction /= distance;

@@ -10,6 +10,18 @@ const float dragscale = 0.2f;
 const float damping = 0.99f;
 int drag_angle;
 
+//small rectange
+Rectangle rec_small(sf::Vector2f(30.f, 50.f));
+sf::RectangleShape rect_small = rec_small.set_size();
+
+//medium rectange
+Rectangle rec_medium(sf::Vector2f(30.f, 70.f));
+sf::RectangleShape rect_medium = rec_medium.set_size();
+
+//large rectange
+Rectangle rec_large(sf::Vector2f(30.f, 100.f));
+sf::RectangleShape rect_large = rec_large.set_size();
+
 Game :: Game() {
     //game window config
     sf::VideoMode desktop_size = sf::VideoMode::getDesktopMode();
@@ -108,7 +120,7 @@ void Game::run() {
                         }
                     }
                 }
-        } 
+        }
         //updating the position of the ball
         update();
         render();
@@ -129,7 +141,6 @@ void Game::update_arrow() {
 }
 
 void Game::update() {
-
     if(!isDragging) {
         golf_ball.move(golf_ball_velocity);
         golf_ball_velocity *= damping;
@@ -168,11 +179,25 @@ void Game::handle_wall_collision() {
 
 void Game::render() {
     game_window.clear(sf::Color::Green);
+    game_window.draw(golf_hole);
     game_window.draw(golf_ball);
     if(isDragging) {
         std :: cout << "true" << std::endl;
         game_window.draw(arrow);
     }
-    game_window.draw(golf_hole);
+    rect_small.setPosition(200.0f, 200.0f);
+    rect_small.setFillColor(sf::Color::Black);
+    game_window.draw(rect_small);
+
+    rect_medium.setPosition(200.0f, 500.0f);
+    rect_medium.setFillColor(sf::Color::Cyan);
+    game_window.draw(rect_medium);
+
+    rect_large.setPosition(300.0f, 500.0f);
+    rect_large.setFillColor(sf::Color::Yellow);
+    game_window.draw(rect_large);
+
+    rect_medium.setPosition(300.0f, 200.0f);
+    game_window.draw(rect_medium);
     game_window.display();
 }

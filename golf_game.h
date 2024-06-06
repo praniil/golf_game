@@ -1,4 +1,5 @@
 #pragma once
+// #include <string>
 #include<SFML/Graphics.hpp>
 
 class Game{
@@ -38,4 +39,18 @@ class Game{
 
         bool show_arrow;
         
+};
+
+class Rectangle{
+    public:
+        sf::Vector2f size;
+        Rectangle(sf::Vector2f size) {
+            this -> size = size;
+        }
+
+        sf::RectangleShape set_size() {
+            sf::RectangleShape rectange;
+            rectange.setSize(size);
+            return rectange;
+        }
 };

@@ -1,7 +1,6 @@
 #pragma once
 // #include <string>
 #include<SFML/Graphics.hpp>
-
 class Game{
     public:
         Game();
@@ -48,9 +47,11 @@ class Rectangle{
             this -> size = size;
         }
 
-        sf::RectangleShape set_size() {
+        virtual sf::RectangleShape set_size() {
             sf::RectangleShape rectange;
             rectange.setSize(size);
             return rectange;
         }
+
+        void manage_collision_effect(sf::RectangleShape &rectange, sf::CircleShape &ball, sf::Vector2f &velocity);
 };

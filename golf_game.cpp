@@ -78,6 +78,13 @@ bool Game::isRunning() const{
     return game_window.isOpen();
 }
 
+void Rectangle::manage_collision_effect(sf::RectangleShape &rectange, sf::CircleShape &ball, sf::Vector2f &velocity) {
+    if(rectange.getGlobalBounds().intersects(ball.getGlobalBounds())) {
+            ball.move(-velocity.x, -velocity.y);
+            velocity.x *= -1;
+        }
+}
+
 void Game::run() {
     while(game_window.isOpen()) {
         sf::Event event;
@@ -127,6 +134,7 @@ void Game::run() {
     }
 }
 
+
 void Game::update_arrow() {
     arrow.setFillColor(sf::Color::Black);
     arrow.setPosition(golf_ball.getPosition().x + golf_ball.getRadius() -1, golf_ball.getPosition().y + golf_ball.getRadius() -1);
@@ -146,6 +154,9 @@ void Game::update() {
         golf_ball_velocity *= damping;
         handle_wall_collision();
         handle_collision();
+        rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
+        rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
+        rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
     }
 }
 
@@ -197,7 +208,5 @@ void Game::render() {
     rect_large.setFillColor(sf::Color::Yellow);
     game_window.draw(rect_large);
 
-    rect_medium.setPosition(300.0f, 200.0f);
-    game_window.draw(rect_medium);
     game_window.display();
 }

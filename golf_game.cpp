@@ -184,6 +184,9 @@ void Game::update() {
         handle_wall_collision();
         handle_collision();
     }
+    if(inHole == true) {
+        game_window.close();
+    }
 }
 
 void Game::handle_collision () {

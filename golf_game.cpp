@@ -11,15 +11,15 @@ const float damping = 0.99f;
 int drag_angle;
 
 //small rectange
-Rectangle rec_small(sf::Vector2f(30.f, 50.f));
+Rectangle rec_small(sf::Vector2f(35.f, 100.f));
 sf::RectangleShape rect_small = rec_small.set_size();
 
 //medium rectange
-Rectangle rec_medium(sf::Vector2f(30.f, 70.f));
+Rectangle rec_medium(sf::Vector2f(35.f, 150.f));
 sf::RectangleShape rect_medium = rec_medium.set_size();
 
 //large rectange
-Rectangle rec_large(sf::Vector2f(30.f, 100.f));
+Rectangle rec_large(sf::Vector2f(40.f, 300.f));
 sf::RectangleShape rect_large = rec_large.set_size();
 
 Game :: Game() {
@@ -33,8 +33,8 @@ Game :: Game() {
     golf_ball.setPointCount(30);
 
     //golf ball position
-    golf_ball_pos_x = 5 * golf_ball_diameter;
-    golf_ball_pos_y = game_window.getSize().y - 5 * golf_ball_diameter;
+    golf_ball_pos_x = 20 * golf_ball_diameter;
+    golf_ball_pos_y = game_window.getSize().y - 20 * golf_ball_diameter;
     golf_ball.setPosition(golf_ball_pos_x, golf_ball_pos_y);
 
     //golf hole attribute
@@ -43,7 +43,7 @@ Game :: Game() {
     golf_hole.setPointCount(30);
 
     //golf hole position
-    golf_hole_pos_x = 20 * golf_ball_diameter;
+    golf_hole_pos_x = game_window.getSize().x - 10 * golf_ball_diameter;
     golf_hole_pos_y = game_window.getSize().y / 10;
     golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
 
@@ -78,11 +78,36 @@ bool Game::isRunning() const{
     return game_window.isOpen();
 }
 
-void Rectangle::manage_collision_effect(sf::RectangleShape &rectange, sf::CircleShape &ball, sf::Vector2f &velocity) {
-    if(rectange.getGlobalBounds().intersects(ball.getGlobalBounds())) {
-            ball.move(-velocity.x, -velocity.y);
+void Rectangle::manage_collision_effect(sf::RectangleShape &rectangle, sf::CircleShape &ball, sf::Vector2f &velocity) {
+    if(rectangle.getGlobalBounds().intersects(ball.getGlobalBounds())) {
+        // Check the side of collision
+        sf::FloatRect ballBounds = ball.getGlobalBounds();
+        sf::FloatRect rectBounds = rectangle.getGlobalBounds();
+
+        // Determine the overlap amounts on each axis
+        float overlapLeft = ballBounds.left + ballBounds.width - rectBounds.left;
+        float overlapRight = rectBounds.left + rectBounds.width - ballBounds.left;
+        float overlapTop = ballBounds.top + ballBounds.height - rectBounds.top;
+        float overlapBottom = rectBounds.top + rectBounds.height - ballBounds.top;
+
+        // Find the minimum overlap
+        bool ballFromLeft = (overlapLeft < overlapRight);
+        bool ballFromTop = (overlapTop < overlapBottom);
+
+        float minOverlapX = ballFromLeft ? overlapLeft : overlapRight;
+        float minOverlapY = ballFromTop ? overlapTop : overlapBottom;
+
+        // Resolve collision on the axis with the smallest overlap
+        if(minOverlapX < minOverlapY) {
+            // Collide with left or right side
+            ball.move(ballFromLeft ? -overlapLeft : overlapRight, 0);
             velocity.x *= -1;
+        } else {
+            // Collide with top or bottom side
+            ball.move(0, ballFromTop ? -overlapTop : overlapBottom);
+            velocity.y *= -1;
         }
+    }
 }
 
 void Game::run() {
@@ -154,9 +179,6 @@ void Game::update() {
         golf_ball_velocity *= damping;
         handle_wall_collision();
         handle_collision();
-        rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
-        rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
-        rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
     }
 }
 
@@ -196,17 +218,95 @@ void Game::render() {
         std :: cout << "true" << std::endl;
         game_window.draw(arrow);
     }
-    rect_small.setPosition(200.0f, 200.0f);
+        // Small obstacles
+    rect_small.setPosition(20.0f, game_window.getSize().y - rect_small.getSize().y - 10.0f);
     rect_small.setFillColor(sf::Color::Black);
+    rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
     game_window.draw(rect_small);
 
-    rect_medium.setPosition(200.0f, 500.0f);
+    rect_small.setPosition(600.0f, 500.0f); // Slightly shifted to create a gap
+    rect_small.setFillColor(sf::Color::Black);
+    rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_small);
+
+    rect_small.setPosition(400.0f, 600.0f); // Another gap
+    rect_small.setFillColor(sf::Color::Black);
+    rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_small);
+
+    // Medium obstacles
+    rect_medium.setPosition(200.0f, 400.0f); // Positioned lower
     rect_medium.setFillColor(sf::Color::Cyan);
+    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
     game_window.draw(rect_medium);
 
-    rect_large.setPosition(300.0f, 500.0f);
+    rect_medium.setPosition(400.0f, 200.0f); // Creating a gap between medium obstacles
+    rect_medium.setFillColor(sf::Color::Cyan);
+    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_medium);
+
+    rect_medium.setPosition(600.0f, 250.0f); // Another gap
+    rect_medium.setFillColor(sf::Color::Cyan);
+    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_medium);
+
+    rect_medium.setPosition(200.0f, 50.0f); // Another gap
+    rect_medium.setFillColor(sf::Color::Cyan);
+    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_medium);
+
+    rect_medium.setPosition(75.0f, 145.0f); // Another gap
+    rect_medium.setFillColor(sf::Color::Cyan);
+    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_medium);
+
+    // Large obstacles
+    rect_large.setPosition(800.0f, 300.0f); // Positioned centrally but higher
     rect_large.setFillColor(sf::Color::Yellow);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
     game_window.draw(rect_large);
+
+    rect_large.setPosition(1000.0f, 300.0f); // Creating a narrow path
+    rect_large.setFillColor(sf::Color::Yellow);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
+
+    rect_large.setPosition(1200.0f, 300.0f); // Another narrow path
+    rect_large.setFillColor(sf::Color::Yellow);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
+
+    // Additional obstacles for more complexity
+    rect_large.setPosition(500.0f, 500.0f); // Positioned lower
+    rect_large.setFillColor(sf::Color::Yellow);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
+
+    rect_large.setPosition(700.0f, 500.0f); // Spaced out to create another gap
+    rect_large.setFillColor(sf::Color::Yellow);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
+
+    rect_large.setPosition(900.0f, 500.0f); // Another gap
+    rect_large.setFillColor(sf::Color::Yellow);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
+
+    rect_large.setPosition(1100.0f, 500.0f); // Far right, lower
+    rect_large.setFillColor(sf::Color::Yellow);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
+
+    rect_large.setPosition(1300.0f, 200.0f); // High and far right
+    rect_large.setFillColor(sf::Color::Yellow);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
+
+    rect_large.setPosition(1100.0f, 0.0f); // Top corner
+    rect_large.setFillColor(sf::Color::Yellow);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
+
 
     game_window.display();
 }

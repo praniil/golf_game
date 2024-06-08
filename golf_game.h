@@ -53,5 +53,5 @@ class Rectangle{
             return rectange;
         }
 
-        void manage_collision_effect(sf::RectangleShape &rectange, sf::CircleShape &ball, sf::Vector2f &velocity);
+        void manage_collision_effect(sf::RectangleShape &rectangle, sf::CircleShape &ball, sf::Vector2f &velocity);
 };

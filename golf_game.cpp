@@ -57,6 +57,8 @@ Game :: Game() {
     arrow.setFillColor(sf::Color::Blue);
     arrow.setOrigin(-0, arrow.getSize().y );
     arrow.setOutlineThickness(0);
+
+    inHole = false;
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -100,11 +102,11 @@ void Rectangle::manage_collision_effect(sf::RectangleShape &rectangle, sf::Circl
         // Resolve collision on the axis with the smallest overlap
         if(minOverlapX < minOverlapY) {
             // Collide with left or right side
-            ball.move(ballFromLeft ? -overlapLeft : overlapRight, 0);
+            ball.move(-velocity.x, -velocity.y);
             velocity.x *= -1;
         } else {
             // Collide with top or bottom side
-            ball.move(0, ballFromTop ? -overlapTop : overlapBottom);
+            ball.move(-velocity.x, -velocity.y);
             velocity.y *= -1;
         }
     }
@@ -126,6 +128,7 @@ void Game::run() {
                     }
                 }
                 
+                if(inHole == false) {
                 //for getting the start position of ball
                 if(event.type == sf::Event::MouseButtonPressed) {
                     if (event.mouseButton.button == sf::Mouse::Left) {
@@ -151,6 +154,7 @@ void Game::run() {
                             isDragging = false;
                         }
                     }
+                }
                 }
         }
         //updating the position of the ball
@@ -193,6 +197,7 @@ void Game::handle_collision () {
             golf_ball_velocity = direction * 2.0f;
             golf_ball.setPosition(golf_hole.getPosition() + sf::Vector2f(golf_ball.getRadius() - 3, golf_ball.getRadius() - 3));
             golf_ball.setFillColor(sf::Color::Black);
+            inHole = true;
         } else {
             sf::Vector2f direction = golf_hole_center - golf_ball_center;
             direction /= distance;

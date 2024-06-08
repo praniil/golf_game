@@ -35,8 +35,8 @@ class Game{
         sf::Vector2f dragEndPos;
         sf::Vector2f golf_ball_velocity;
 
-
         bool show_arrow;
+        bool inHole;
         
 };
 

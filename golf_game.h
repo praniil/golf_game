@@ -37,6 +37,9 @@ class Game{
 
         bool show_arrow;
         bool inHole;
+
+        //shot count
+        int shot_count;
         
 };
 

@@ -59,6 +59,8 @@ Game :: Game() {
     arrow.setOutlineThickness(0);
 
     inHole = false;
+
+    shot_count = 0;
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -152,6 +154,7 @@ void Game::run() {
                             sf::Vector2f distance_drag = dragEndPos - dragStartPos;
                             golf_ball_velocity = -distance_drag * dragscale;                         
                             isDragging = false;
+                            shot_count++;
                         }
                     }
                 }
@@ -161,6 +164,7 @@ void Game::run() {
         update();
         render();
     }
+    std::cout << "count" << shot_count << std::endl;
 }
 
 

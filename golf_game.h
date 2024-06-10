@@ -40,6 +40,9 @@ class Game{
 
         //shot count
         int shot_count;
+
+        //least shots count
+        int least_shots_count;
         
 };
 

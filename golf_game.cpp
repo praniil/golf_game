@@ -3,6 +3,7 @@
 #include<stdio.h>
 #include<iostream>
 #include<cmath>
+#include<fstream>
 
 //golbal variable
 int golf_ball_diameter = 10;
@@ -41,7 +42,6 @@ Game :: Game() {
     golf_hole.setRadius(golf_ball_diameter * 1.52);
     golf_hole.setFillColor(sf::Color::Black);
     golf_hole.setPointCount(30);
-
     //golf hole position
     golf_hole_pos_x = game_window.getSize().x - 10 * golf_ball_diameter;
     golf_hole_pos_y = game_window.getSize().y / 10;
@@ -61,6 +61,7 @@ Game :: Game() {
     inHole = false;
 
     shot_count = 0;
+
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -188,7 +189,22 @@ void Game::update() {
         handle_wall_collision();
         handle_collision();
     }
+
     if(inHole == true) {
+        std::ifstream least_count_file("least_shot_count.txt");
+        if (least_count_file.is_open()) {
+            least_count_file >> least_shots_count;
+        }
+        std::cout << least_shots_count << std::endl;
+        if (shot_count < least_shots_count) {
+            least_shots_count = shot_count;
+            std::ofstream least_count_file("least_shot_count.txt");
+
+            if(least_count_file.is_open()) {
+                least_count_file << least_shots_count;
+            }
+            std::cout << shot_count << "\n" << least_shots_count << std::endl;
+        }
         game_window.close();
     }
 }

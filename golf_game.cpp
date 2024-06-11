@@ -122,7 +122,12 @@ void Game::run() {
     while(game_window.isOpen()) {
         sf::Event event;
         while(game_window.pollEvent(event)) {
-
+                if(golf_ball_velocity.x >= 0.01f || golf_ball_velocity.y >= 0.01f) {
+                    std::cout << golf_ball_velocity.x << "\t" << golf_ball_velocity.y << std::endl;
+                    if (event.type == sf::Event::MouseButtonPressed){
+                            continue;
+                    }
+                }
                 if (event.type == sf::Event::Closed) {
                     game_window.close();
                 }
@@ -168,7 +173,7 @@ void Game::run() {
                             } else if (distance_drag.y < -100.0f) {
                                 distance_drag.y = -100.0f;
                             }
-                            golf_ball_velocity = -distance_drag * dragscale;                         
+                            golf_ball_velocity = -distance_drag * dragscale;                       
                             isDragging = false;
                             shot_count++;
                         }

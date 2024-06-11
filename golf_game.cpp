@@ -62,6 +62,9 @@ Game :: Game() {
 
     shot_count = 0;
 
+    power_meter_width = 100.0f;
+    power_meter_height = 20.0f;
+    power_meter.setSize(sf::Vector2f(power_meter_width, power_meter_height));
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -132,13 +135,15 @@ void Game::run() {
                 
                 if(inHole == false) {
                 //for getting the start position of ball
+                
                 if(event.type == sf::Event::MouseButtonPressed) {
                     if (event.mouseButton.button == sf::Mouse::Left) {
                         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
                         if (golf_ball.getGlobalBounds().contains(mousePos)) {
                             isDragging = true;
                             dragStartPos = mousePos;
-                        }
+                        }  
+                        dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
                     }
                 }
 
@@ -153,7 +158,6 @@ void Game::run() {
                             dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
                             sf::Vector2f distance_drag = dragEndPos - dragStartPos;
                             std::cout << distance_drag.x << "\t" << distance_drag.y << std::endl;
-                            
                             if(distance_drag.x < -100.0f) {
                                 distance_drag.x = -100.0f;
                             } else if(distance_drag.x > 100.0f) {
@@ -165,7 +169,6 @@ void Game::run() {
                             } else if (distance_drag.y < -100.0f) {
                                 distance_drag.y = -100.0f;
                             }
-
                             std::cout << distance_drag.x << "\t" << distance_drag.y << std::endl;
                             golf_ball_velocity = -distance_drag * dragscale;                         
                             isDragging = false;
@@ -181,7 +184,6 @@ void Game::run() {
     }
 }
 
-
 void Game::update_arrow() {
     arrow.setFillColor(sf::Color::Black);
     arrow.setPosition(golf_ball.getPosition().x + golf_ball.getRadius() -1, golf_ball.getPosition().y + golf_ball.getRadius() -1);
@@ -190,7 +192,29 @@ void Game::update_arrow() {
     sf::Vector2f normalizedDragVector = normalize(dragVector);
     float angle = std::atan2(normalizedDragVector.y, normalizedDragVector.x) * 180 / M_PI;
     arrow.setRotation(angle + 90);
-    
+    if(dragVector.x < -100.0f) {
+        dragVector.x = -100.0f;
+    } else if(dragVector.x > 100.0f) {
+        dragVector.x = 100.0f;
+    }
+    if (dragVector.y > 100.0f) {
+        dragVector.y = 100.0f;
+    } else if (dragVector.y < -100.0f) {
+        dragVector.y = -100.0f;
+    }
+    update_power_meter(dragVector);
+}
+
+void Game::update_power_meter(sf::Vector2f drag_vector) {
+    std::cout << "drag vector in update: " << drag_vector.x << "\t" << drag_vector.y << std::endl;
+    power_meter.setPosition(golf_ball.getPosition().x, golf_ball.getPosition().y + golf_ball.getRadius() * 3);
+    power_meter.setFillColor(sf::Color::White);
+    power_meter_foreground.setPosition(golf_ball.getPosition().x, golf_ball.getPosition().y + golf_ball.getRadius() * 3);
+    power_meter_foreground.setFillColor(sf::Color::Black);
+    float percentage;
+    percentage = (abs(drag_vector.x) / 200.0f) + (abs(drag_vector.y) / 200.0f);
+    std::cout << "percentage: " << percentage << std::endl;
+    power_meter_foreground.setSize(sf::Vector2f((percentage * power_meter_width), power_meter_height));
 }
 
 void Game::update() {
@@ -253,6 +277,8 @@ void Game::render() {
     game_window.draw(golf_ball);
     if(isDragging) {
         game_window.draw(arrow);
+        game_window.draw(power_meter);
+        game_window.draw(power_meter_foreground);
     }
         // Small obstacles
     rect_small.setPosition(20.0f, game_window.getSize().y - rect_small.getSize().y - 10.0f);

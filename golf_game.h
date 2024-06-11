@@ -13,6 +13,7 @@ class Game{
         float distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2);
         sf::Vector2f normalize(sf::Vector2f &source);
         void update_arrow();
+        void update_power_meter(sf::Vector2f drag_vector);
     private:
         //window
         sf::RenderWindow game_window;
@@ -43,7 +44,11 @@ class Game{
 
         //least shots count
         int least_shots_count;
-        
+
+        //power meter
+        sf::RectangleShape power_meter;
+        sf::RectangleShape power_meter_foreground;
+        float power_meter_width, power_meter_height;
 };
 
 class Rectangle{

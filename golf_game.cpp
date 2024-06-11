@@ -127,7 +127,6 @@ void Game::run() {
                 if(event.type == sf::Event::KeyPressed ) {
                     if(event.key.code == sf::Keyboard::Escape) {
                         game_window.close();
-                        std::cout<<"in event" << std::endl;
                     }
                 }
                 
@@ -153,6 +152,21 @@ void Game::run() {
                         if (isDragging) {
                             dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
                             sf::Vector2f distance_drag = dragEndPos - dragStartPos;
+                            std::cout << distance_drag.x << "\t" << distance_drag.y << std::endl;
+                            
+                            if(distance_drag.x < -100.0f) {
+                                distance_drag.x = -100.0f;
+                            } else if(distance_drag.x > 100.0f) {
+                                distance_drag.x = 100.0f;
+                            }
+
+                            if (distance_drag.y > 100.0f) {
+                                distance_drag.y = 100.0f;
+                            } else if (distance_drag.y < -100.0f) {
+                                distance_drag.y = -100.0f;
+                            }
+
+                            std::cout << distance_drag.x << "\t" << distance_drag.y << std::endl;
                             golf_ball_velocity = -distance_drag * dragscale;                         
                             isDragging = false;
                             shot_count++;
@@ -165,15 +179,12 @@ void Game::run() {
         update();
         render();
     }
-    std::cout << "count" << shot_count << std::endl;
 }
 
 
 void Game::update_arrow() {
     arrow.setFillColor(sf::Color::Black);
     arrow.setPosition(golf_ball.getPosition().x + golf_ball.getRadius() -1, golf_ball.getPosition().y + golf_ball.getRadius() -1);
-    std::cout << "golf ball pos x: " << golf_ball.getPosition().x << std::endl;
-    std::cout << "arrow posn x: " << arrow.getPosition().x << std::endl;
     sf::Vector2f currentMousePosition = game_window.mapPixelToCoords(sf::Mouse::getPosition(game_window));
     sf::Vector2f dragVector = dragStartPos - currentMousePosition;
     sf::Vector2f normalizedDragVector = normalize(dragVector);
@@ -195,7 +206,6 @@ void Game::update() {
         if (least_count_file.is_open()) {
             least_count_file >> least_shots_count;
         }
-        std::cout << least_shots_count << std::endl;
         if (shot_count < least_shots_count) {
             least_shots_count = shot_count;
             std::ofstream least_count_file("least_shot_count.txt");
@@ -203,7 +213,6 @@ void Game::update() {
             if(least_count_file.is_open()) {
                 least_count_file << least_shots_count;
             }
-            std::cout << shot_count << "\n" << least_shots_count << std::endl;
         }
         game_window.close();
     }
@@ -243,7 +252,6 @@ void Game::render() {
     game_window.draw(golf_hole);
     game_window.draw(golf_ball);
     if(isDragging) {
-        std :: cout << "true" << std::endl;
         game_window.draw(arrow);
     }
         // Small obstacles

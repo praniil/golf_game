@@ -64,7 +64,7 @@ Game :: Game() {
 
     power_meter_width = 100.0f;
     power_meter_height = 20.0f;
-    power_meter.setSize(sf::Vector2f(power_meter_width, power_meter_height));
+    power_meter.setSize(sf::Vector2f(power_meter_width + 6, power_meter_height));
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -157,7 +157,6 @@ void Game::run() {
                         if (isDragging) {
                             dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
                             sf::Vector2f distance_drag = dragEndPos - dragStartPos;
-                            std::cout << distance_drag.x << "\t" << distance_drag.y << std::endl;
                             if(distance_drag.x < -100.0f) {
                                 distance_drag.x = -100.0f;
                             } else if(distance_drag.x > 100.0f) {
@@ -169,7 +168,6 @@ void Game::run() {
                             } else if (distance_drag.y < -100.0f) {
                                 distance_drag.y = -100.0f;
                             }
-                            std::cout << distance_drag.x << "\t" << distance_drag.y << std::endl;
                             golf_ball_velocity = -distance_drag * dragscale;                         
                             isDragging = false;
                             shot_count++;
@@ -206,15 +204,14 @@ void Game::update_arrow() {
 }
 
 void Game::update_power_meter(sf::Vector2f drag_vector) {
-    std::cout << "drag vector in update: " << drag_vector.x << "\t" << drag_vector.y << std::endl;
     power_meter.setPosition(golf_ball.getPosition().x, golf_ball.getPosition().y + golf_ball.getRadius() * 3);
     power_meter.setFillColor(sf::Color::White);
-    power_meter_foreground.setPosition(golf_ball.getPosition().x, golf_ball.getPosition().y + golf_ball.getRadius() * 3);
+    power_meter_foreground.setPosition(golf_ball.getPosition().x + 3, golf_ball.getPosition().y + 2.7 + golf_ball.getRadius() * 3);
     power_meter_foreground.setFillColor(sf::Color::Black);
     float percentage;
     percentage = (abs(drag_vector.x) / 200.0f) + (abs(drag_vector.y) / 200.0f);
     std::cout << "percentage: " << percentage << std::endl;
-    power_meter_foreground.setSize(sf::Vector2f((percentage * power_meter_width), power_meter_height));
+    power_meter_foreground.setSize(sf::Vector2f((percentage * power_meter_width), power_meter_height - 5));
 }
 
 void Game::update() {
@@ -275,12 +272,8 @@ void Game::render() {
     game_window.clear(sf::Color::Green);
     game_window.draw(golf_hole);
     game_window.draw(golf_ball);
-    if(isDragging) {
-        game_window.draw(arrow);
-        game_window.draw(power_meter);
-        game_window.draw(power_meter_foreground);
-    }
-        // Small obstacles
+
+    // Small obstacles
     rect_small.setPosition(20.0f, game_window.getSize().y - rect_small.getSize().y - 10.0f);
     rect_small.setFillColor(sf::Color::Black);
     rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
@@ -368,6 +361,11 @@ void Game::render() {
     rect_large.setFillColor(sf::Color::Yellow);
     rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
     game_window.draw(rect_large);
+    if(isDragging) {
+        game_window.draw(arrow);
+        game_window.draw(power_meter);
+        game_window.draw(power_meter_foreground);
+    }
 
 
     game_window.display();

@@ -65,6 +65,18 @@ Game :: Game() {
     power_meter_width = 100.0f;
     power_meter_height = 22.0f;
     power_meter.setSize(sf::Vector2f(power_meter_width + 6, power_meter_height));
+
+    //sand texture
+    sand_image.loadFromFile("sand_texture.jpg");
+    sand_texture.loadFromImage(sand_image);
+    sand_sprite.setTexture(sand_texture);
+    sand_texture_size = sand_texture.getSize();
+    sand_desired_height = 150.0f;
+    sand_desired_width = 250.0f;
+    sand_scale_x = sand_desired_width / sand_texture_size.x;
+    sand_scale_y = sand_desired_height / sand_texture_size.y;
+    sand_sprite.setScale(sand_scale_x, sand_scale_y);
+    sand_damping = 0.8f;
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -288,9 +300,31 @@ void Game::handle_wall_collision() {
     }
 }
 
+void Game::sand_collision() {
+    if(sand_sprite.getGlobalBounds().intersects(golf_ball.getGlobalBounds())) {
+       golf_ball_velocity.x = golf_ball_velocity.x * sand_damping;
+       golf_ball_velocity.y = golf_ball_velocity.y * sand_damping;
+    }
+}
+
 void Game::render() {
     game_window.clear(sf::Color::Green);
     game_window.draw(golf_hole);
+    //sand texture 1
+    sand_sprite.setPosition(655.0f, 455.0f);
+    sand_collision();
+    game_window.draw(sand_sprite);
+    //sand texture 2
+    sand_sprite.setPosition(780.0f, 15.0f);
+    sand_collision();
+    game_window.draw(sand_sprite);
+
+    //sand texture 3
+    sand_sprite.setPosition(1180.0f, 200.0f);
+    sand_collision();
+    game_window.draw(sand_sprite);
+
+    //golf ball
     game_window.draw(golf_ball);
 
     // Small obstacles

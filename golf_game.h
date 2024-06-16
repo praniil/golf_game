@@ -14,6 +14,7 @@ class Game{
         sf::Vector2f normalize(sf::Vector2f &source);
         void update_arrow();
         void update_power_meter(sf::Vector2f drag_vector);
+        void sand_collision();
     private:
         //window
         sf::RenderWindow game_window;
@@ -49,6 +50,27 @@ class Game{
         sf::RectangleShape power_meter;
         sf::RectangleShape power_meter_foreground;
         float power_meter_width, power_meter_height;
+
+        //for sand texture
+        sf::Image sand_image;
+        sf::Texture sand_texture;
+        sf::Sprite sand_sprite;
+        sf::Vector2u sand_texture_size;
+        float sand_scale_x;
+        float sand_scale_y;
+        float sand_desired_width;
+        float sand_desired_height;
+        float sand_damping;
+
+        //for water texture
+        sf::Image water_image;
+        sf::Texture water_texture;
+        sf::Sprite water_sprite;
+        sf::Vector2u water_texture_size;
+        float water_scale_x;
+        float water_scale_y;
+        float water_desired_width;
+        float water_desired_height;
 };
 
 class Rectangle{

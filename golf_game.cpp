@@ -77,6 +77,17 @@ Game :: Game() {
     sand_scale_y = sand_desired_height / sand_texture_size.y;
     sand_sprite.setScale(sand_scale_x, sand_scale_y);
     sand_damping = 0.8f;
+
+    //water texture
+    water_image.loadFromFile("water_texture.png");
+    water_texture.loadFromImage(water_image);
+    water_sprite.setTexture(water_texture);
+    water_texture_size = water_texture.getSize();
+    water_desired_height = 150.0f;
+    water_desired_width = 250.0f;
+    water_scale_x = water_desired_width / water_texture.getSize().x;
+    water_scale_y = water_desired_height / water_texture.getSize().y;
+    water_sprite.setScale(water_scale_x, water_scale_y);
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -169,7 +180,7 @@ void Game::run() {
                             if (isDragging) {
                                 dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
                                 sf::Vector2f distance_drag = dragEndPos - dragStartPos;
-                                    if(distance_drag.x < -100.0f) {
+                                if(distance_drag.x < -100.0f) {
                                     distance_drag.x = -100.0f;
                                 } else if(distance_drag.x > 100.0f) {
                                     distance_drag.x = 100.0f;
@@ -211,7 +222,7 @@ void Game::update_arrow() {
         dragVector.y = 100.0f;
     } else if (dragVector.y < -100.0f) {
         dragVector.y = -100.0f;
-    }
+    } 
     update_power_meter(dragVector);
 }
 
@@ -242,7 +253,10 @@ void Game::update_power_meter(sf::Vector2f drag_vector) {
     power_meter.setFillColor(sf::Color(14, 194, 235, 150));
 
     float percentage;
-    percentage = (abs(drag_vector.x) / 200.0f) + (abs(drag_vector.y) / 200.0f);
+    percentage = (abs(drag_vector.x) / 100.0f) + (abs(drag_vector.y) / 100.0f);
+    if (percentage > 1.0f) {
+        percentage = 1.0f;
+    }
     power_meter_foreground.setSize(sf::Vector2f((percentage * power_meter_width), power_meter_height - 5));
 }
 
@@ -323,6 +337,18 @@ void Game::render() {
     sand_sprite.setPosition(1180.0f, 200.0f);
     sand_collision();
     game_window.draw(sand_sprite);
+
+    //water texture 1
+    water_sprite.setPosition(100.0f, 75.0f);
+    game_window.draw(water_sprite);
+
+    //water texture 2
+    water_sprite.setPosition(300.0f, 700.0f);
+    game_window.draw(water_sprite);
+
+    //water texture 3
+    water_sprite.setPosition(870.0f, 700.0f);
+    game_window.draw(water_sprite);
 
     //golf ball
     game_window.draw(golf_ball);

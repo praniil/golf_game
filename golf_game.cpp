@@ -12,15 +12,15 @@ const float damping = 0.99f;
 int drag_angle;
 
 //small rectange
-Rectangle rec_small(sf::Vector2f(35.f, 100.f));
+Rectangle rec_small(sf::Vector2f(35.f, 150.f));
 sf::RectangleShape rect_small = rec_small.set_size();
 
 //medium rectange
-Rectangle rec_medium(sf::Vector2f(35.f, 150.f));
+Rectangle rec_medium(sf::Vector2f(35.f, 200.f));
 sf::RectangleShape rect_medium = rec_medium.set_size();
 
 //large rectange
-Rectangle rec_large(sf::Vector2f(40.f, 300.f));
+Rectangle rec_large(sf::Vector2f(40.f, 350.f));
 sf::RectangleShape rect_large = rec_large.set_size();
 
 Game :: Game() {
@@ -294,34 +294,34 @@ void Game::render() {
     game_window.draw(golf_ball);
 
     // Small obstacles
-    rect_small.setPosition(650.0f, 150.0f);
+    rect_small.setPosition(400.0f, 220.0f);
     rect_small.setFillColor(sf::Color::Black);
     rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
     game_window.draw(rect_small);
 
-    rect_small.setPosition(600.0f, 500.0f); // Slightly shifted to create a gap
+    rect_small.setPosition(600.0f, 40.0f); // Slightly shifted to create a gap
     rect_small.setFillColor(sf::Color::Black);
     rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
     game_window.draw(rect_small);
 
     // Medium obstacles
-    rect_medium.setPosition(200.0f, 400.0f); // Positioned lower
+    rect_medium.setPosition(600.0f, 500.0f); // Positioned lower
     rect_medium.setFillColor(sf::Color::Red);
     rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
     game_window.draw(rect_medium);
 
-    rect_medium.setPosition(400.0f, 200.0f); // Creating a gap between medium obstacles
+    rect_medium.setPosition(750.0f, 230.0f); // Creating a gap between medium obstacles
     rect_medium.setFillColor(sf::Color::Red);
     rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
     game_window.draw(rect_medium);
 
     // Large obstacles
-    rect_large.setPosition(800.0f, 300.0f); // Positioned centrally but higher
+    rect_large.setPosition(1175.0f, 400.0f); // Positioned centrally but higher
     rect_large.setFillColor(sf::Color::Cyan);
     rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
     game_window.draw(rect_large);
 
-    rect_large.setPosition(1000.0f, 500.0f); // Creating a narrow path
+    rect_large.setPosition(1050.0f, 50.0f); // Creating a narrow path
     rect_large.setFillColor(sf::Color::Cyan);
     rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
     game_window.draw(rect_large);

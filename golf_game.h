@@ -15,6 +15,7 @@ class Game{
         void update_arrow();
         void update_power_meter(sf::Vector2f drag_vector);
         void sand_collision();
+        void water_collision();
     private:
         //window
         sf::RenderWindow game_window;

@@ -191,7 +191,8 @@ void Game::run() {
                                 } else if (distance_drag.y < -100.0f) {
                                     distance_drag.y = -100.0f;
                                 }
-                                golf_ball_velocity = -distance_drag * dragscale;                       
+                                golf_ball_velocity = -distance_drag * dragscale;  
+                                std::cout << "golf ball vel x: " << golf_ball_velocity.x << std::endl;                     
                                 isDragging = false;
                                 shot_count++;
                             }
@@ -321,6 +322,41 @@ void Game::sand_collision() {
     }
 }
 
+void Game::water_collision() {
+    if(water_sprite.getGlobalBounds().intersects(golf_ball.getGlobalBounds())) {
+        golf_ball_velocity.x = golf_ball_velocity.x * 0.8;
+        golf_ball_velocity.y = golf_ball_velocity.y * 0.8;
+        golf_ball.setFillColor(sf::Color(0, 36, 86));
+        if (abs(golf_ball_velocity.x) <= 0.01f && abs(golf_ball_velocity.y) <= 0.01f) {
+            golf_ball_velocity.x = 0.0f;
+            golf_ball_velocity.y = 0.0f;
+            float dis_right = water_sprite.getPosition().x + water_sprite.getGlobalBounds().width - golf_ball.getPosition().x;
+            float dis_left = golf_ball.getPosition().x - water_sprite.getPosition().x;
+            float dis_top = golf_ball.getPosition().y - water_sprite.getPosition().y;
+            float dis_bottom = water_sprite.getPosition().y + water_sprite.getGlobalBounds().height - golf_ball.getPosition().y;
+            if(dis_right < dis_left) {
+                golf_ball.setFillColor(sf::Color::White);
+                if(dis_right < dis_bottom && dis_right < dis_top) {
+                    golf_ball.setPosition(golf_ball.getPosition().x + dis_right + 3 * golf_ball.getRadius(), golf_ball.getPosition().y);
+                } else if(dis_bottom > dis_top) {
+                    golf_ball.setPosition(golf_ball.getPosition().x , golf_ball.getPosition().y - dis_top - 3 * golf_ball.getRadius());
+                } else {
+                    golf_ball.setPosition(golf_ball.getPosition().x , golf_ball.getPosition().y + dis_bottom + 3 *  golf_ball.getRadius());
+                }
+            } else {
+                golf_ball.setFillColor(sf::Color::White);
+                if(dis_left < dis_bottom && dis_left < dis_top) {
+                    golf_ball.setPosition(golf_ball.getPosition().x - dis_left - 3 * golf_ball.getRadius(), golf_ball.getPosition().y);
+                } else if(dis_bottom > dis_top) {
+                    golf_ball.setPosition(golf_ball.getPosition().x , golf_ball.getPosition().y - dis_top - 3 * golf_ball.getRadius());
+                } else {
+                    golf_ball.setPosition(golf_ball.getPosition().x , golf_ball.getPosition().y + dis_bottom + 3 * golf_ball.getRadius());
+                }
+            }
+        }
+    }
+}
+
 void Game::render() {
     game_window.clear(sf::Color::Green);
     game_window.draw(golf_hole);
@@ -340,14 +376,17 @@ void Game::render() {
 
     //water texture 1
     water_sprite.setPosition(100.0f, 75.0f);
+    water_collision();
     game_window.draw(water_sprite);
 
     //water texture 2
     water_sprite.setPosition(300.0f, 700.0f);
+    water_collision();
     game_window.draw(water_sprite);
 
     //water texture 3
     water_sprite.setPosition(870.0f, 700.0f);
+    water_collision();
     game_window.draw(water_sprite);
 
     //golf ball

@@ -6,7 +6,7 @@
 #include<fstream>
 
 //golbal variable
-int golf_ball_diameter = 10;
+const int golf_ball_diameter = 10;
 const float dragscale = 0.2f;
 const float damping = 0.99f;
 int drag_angle;
@@ -27,7 +27,7 @@ Game :: Game() {
     //game window config
     sf::VideoMode desktop_size = sf::VideoMode::getDesktopMode();
     game_window.create(desktop_size, "GOLF_GAME", sf::Style::Fullscreen);
-    game_window.setFramerateLimit(100);
+    game_window.setFramerateLimit(60);
     //golf ball attribute
     golf_ball.setRadius(golf_ball_diameter);
     golf_ball.setFillColor(sf::Color::White);
@@ -123,15 +123,10 @@ void Game::run() {
         sf::Event event;
         while(game_window.pollEvent(event)) {
                 if(golf_ball_velocity.x >= 0.01f || golf_ball_velocity.y >= 0.01f) {
-                    std::cout << golf_ball_velocity.x << "\t" << golf_ball_velocity.y << std::endl;
                     if (event.type == sf::Event::MouseButtonPressed){
                             continue;
                     }
                 }
-                if (event.type == sf::Event::Closed) {
-                    game_window.close();
-                }
-
                 if(event.type == sf::Event::KeyPressed ) {
                     if(event.key.code == sf::Keyboard::Escape) {
                         game_window.close();
@@ -139,46 +134,46 @@ void Game::run() {
                 }
                 
                 if(inHole == false) {
-                //for getting the start position of ball
-                
-                if(event.type == sf::Event::MouseButtonPressed) {
-                    if (event.mouseButton.button == sf::Mouse::Left) {
-                        sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
-                        if (golf_ball.getGlobalBounds().contains(mousePos)) {
-                            isDragging = true;
-                            dragStartPos = mousePos;
-                        }  
-                        dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
-                    }
-                }
-
-                if (isDragging) {
-                    update_arrow();
-                }
-                
-                //for getting the end position of the ball after drag
-                if (event.type == sf::Event::MouseButtonReleased) {
-                    if (event.mouseButton.button == sf::Mouse::Left) {
-                        if (isDragging) {
+                    //for getting the start position of ball
+                    
+                    if(event.type == sf::Event::MouseButtonPressed) {
+                        if (event.mouseButton.button == sf::Mouse::Left) {
+                            sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
+                            if (golf_ball.getGlobalBounds().contains(mousePos)) {
+                                isDragging = true;
+                                dragStartPos = mousePos;
+                            }  
                             dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
-                            sf::Vector2f distance_drag = dragEndPos - dragStartPos;
-                            if(distance_drag.x < -100.0f) {
-                                distance_drag.x = -100.0f;
-                            } else if(distance_drag.x > 100.0f) {
-                                distance_drag.x = 100.0f;
-                            }
-
-                            if (distance_drag.y > 100.0f) {
-                                distance_drag.y = 100.0f;
-                            } else if (distance_drag.y < -100.0f) {
-                                distance_drag.y = -100.0f;
-                            }
-                            golf_ball_velocity = -distance_drag * dragscale;                       
-                            isDragging = false;
-                            shot_count++;
                         }
                     }
-                }
+
+                    if (isDragging) {
+                        update_arrow();
+                    }
+                    
+                    //for getting the end position of the ball after drag
+                    if (event.type == sf::Event::MouseButtonReleased) {
+                        if (event.mouseButton.button == sf::Mouse::Left) {
+                            if (isDragging) {
+                                dragEndPos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
+                                sf::Vector2f distance_drag = dragEndPos - dragStartPos;
+                                    if(distance_drag.x < -100.0f) {
+                                    distance_drag.x = -100.0f;
+                                } else if(distance_drag.x > 100.0f) {
+                                    distance_drag.x = 100.0f;
+                                }
+
+                                if (distance_drag.y > 100.0f) {
+                                    distance_drag.y = 100.0f;
+                                } else if (distance_drag.y < -100.0f) {
+                                    distance_drag.y = -100.0f;
+                                }
+                                golf_ball_velocity = -distance_drag * dragscale;                       
+                                isDragging = false;
+                                shot_count++;
+                            }
+                        }
+                    }
                 }
         }
         //updating the position of the ball
@@ -236,7 +231,6 @@ void Game::update_power_meter(sf::Vector2f drag_vector) {
 
     float percentage;
     percentage = (abs(drag_vector.x) / 200.0f) + (abs(drag_vector.y) / 200.0f);
-    std::cout << "percentage: " << percentage << std::endl;
     power_meter_foreground.setSize(sf::Vector2f((percentage * power_meter_width), power_meter_height - 5));
 }
 
@@ -300,17 +294,12 @@ void Game::render() {
     game_window.draw(golf_ball);
 
     // Small obstacles
-    rect_small.setPosition(20.0f, game_window.getSize().y - rect_small.getSize().y - 10.0f);
+    rect_small.setPosition(650.0f, 150.0f);
     rect_small.setFillColor(sf::Color::Black);
     rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
     game_window.draw(rect_small);
 
     rect_small.setPosition(600.0f, 500.0f); // Slightly shifted to create a gap
-    rect_small.setFillColor(sf::Color::Black);
-    rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_small);
-
-    rect_small.setPosition(400.0f, 600.0f); // Another gap
     rect_small.setFillColor(sf::Color::Black);
     rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
     game_window.draw(rect_small);
@@ -326,73 +315,21 @@ void Game::render() {
     rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
     game_window.draw(rect_medium);
 
-    rect_medium.setPosition(600.0f, 250.0f); // Another gap
-    rect_medium.setFillColor(sf::Color::Red);
-    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_medium);
-
-    rect_medium.setPosition(200.0f, 50.0f); // Another gap
-    rect_medium.setFillColor(sf::Color::Red);
-    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_medium);
-
-    rect_medium.setPosition(75.0f, 145.0f); // Another gap
-    rect_medium.setFillColor(sf::Color::Red);
-    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_medium);
-
     // Large obstacles
-    // rect_large.setPosition(800.0f, 300.0f); // Positioned centrally but higher
-    // rect_large.setFillColor(sf::Color::Cyan);
-    // rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    // game_window.draw(rect_large);
+    rect_large.setPosition(800.0f, 300.0f); // Positioned centrally but higher
+    rect_large.setFillColor(sf::Color::Cyan);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
 
-    // rect_large.setPosition(1000.0f, 300.0f); // Creating a narrow path
-    // rect_large.setFillColor(sf::Color::Cyan);
-    // rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    // game_window.draw(rect_large);
+    rect_large.setPosition(1000.0f, 500.0f); // Creating a narrow path
+    rect_large.setFillColor(sf::Color::Cyan);
+    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+    game_window.draw(rect_large);
 
-    // rect_large.setPosition(1200.0f, 300.0f); // Another narrow path
-    // rect_large.setFillColor(sf::Color::Cyan);
-    // rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    // game_window.draw(rect_large);
-
-    // // Additional obstacles for more complexity
-    // rect_large.setPosition(500.0f, 500.0f); // Positioned lower
-    // rect_large.setFillColor(sf::Color::Cyan);
-    // rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    // game_window.draw(rect_large);
-
-    // rect_large.setPosition(700.0f, 500.0f); // Spaced out to create another gap
-    // rect_large.setFillColor(sf::Color::Cyan);
-    // rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    // game_window.draw(rect_large);
-
-    // rect_large.setPosition(900.0f, 500.0f); // Another gap
-    // rect_large.setFillColor(sf::Color::Cyan);
-    // rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    // game_window.draw(rect_large);
-
-    // rect_large.setPosition(1100.0f, 500.0f); // Far right, lower
-    // rect_large.setFillColor(sf::Color::Cyan);
-    // rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    // game_window.draw(rect_large);
-
-    // rect_large.setPosition(1300.0f, 200.0f); // High and far right
-    // rect_large.setFillColor(sf::Color::Cyan);
-    // rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    // game_window.draw(rect_large);
-
-    // rect_large.setPosition(1100.0f, 0.0f); // Top corner
-    // rect_large.setFillColor(sf::Color::Cyan);
-    // rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    // game_window.draw(rect_large);
     if(isDragging) {
         game_window.draw(power_meter);
         game_window.draw(power_meter_foreground);
         game_window.draw(arrow);
     }
-
-
     game_window.display();
 }

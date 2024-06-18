@@ -88,6 +88,17 @@ Game :: Game() {
     water_scale_x = water_desired_width / water_texture.getSize().x;
     water_scale_y = water_desired_height / water_texture.getSize().y;
     water_sprite.setScale(water_scale_x, water_scale_y);
+
+    //tree texture
+    wind_image.loadFromFile("wind.jpg");
+    wind_texture.loadFromImage(wind_image);
+    wind_sprite.setTexture(wind_texture);
+    wind_texture_size = wind_texture.getSize();
+    wind_desired_height = 75.0f;
+    wind_desired_width = 125.0f;
+    wind_scale_x = wind_desired_width / wind_texture.getSize().x;
+    wind_scale_y = wind_desired_height / wind_texture.getSize().y;
+    wind_sprite.setScale(wind_scale_x, wind_scale_y);
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -353,7 +364,53 @@ void Game::water_collision() {
                     golf_ball.setPosition(golf_ball.getPosition().x , golf_ball.getPosition().y + dis_bottom + 3 * golf_ball.getRadius());
                 }
             }
-        }
+        }    
+    }
+}
+
+void Game::wind_collision() {
+    if(wind_sprite.getGlobalBounds().intersects(golf_ball.getGlobalBounds())) {
+       int random_number;
+       random_number = rand() % 8;
+       std::cout << "random number" << random_number << std::endl; 
+       switch (random_number)
+       {
+        case 0:
+            golf_ball_velocity.x = golf_ball_velocity.x + 2.8f; 
+        break;
+
+        case 1:
+            golf_ball_velocity.x = golf_ball_velocity.x - 2.8f;
+        break;
+
+        case 2: 
+            golf_ball_velocity.y = golf_ball_velocity.y + 2.8f;
+        break;
+
+        case 3:
+            golf_ball_velocity.y = golf_ball_velocity.y - 2.8f;
+        break;
+
+        case 4:
+            golf_ball_velocity.x = golf_ball_velocity.x + 4.8f; 
+        break;
+
+        case 5:
+            golf_ball_velocity.x = golf_ball_velocity.x - 3.8f;
+        break;
+
+        case 6: 
+            golf_ball_velocity.y = golf_ball_velocity.y + 0.8f;
+        break;
+
+        case 7:
+            golf_ball_velocity.y = golf_ball_velocity.y - 6.8f;
+        break;
+        
+        default:
+            std::cout << "wrong data" << std::endl;
+        break;
+       }
     }
 }
 
@@ -388,6 +445,21 @@ void Game::render() {
     water_sprite.setPosition(870.0f, 700.0f);
     water_collision();
     game_window.draw(water_sprite);
+
+    //wind_texture 1
+    wind_sprite.setPosition(450.0f, 300.0f);
+    wind_collision();
+    game_window.draw(wind_sprite);
+
+    //wind_texture 2
+    wind_sprite.setPosition(850.0f, 350.0f);
+    wind_collision();
+    game_window.draw(wind_sprite);
+
+    //wind_texture 3
+    wind_sprite.setPosition(400.0f, 50.0f);
+    wind_collision();
+    game_window.draw(wind_sprite);
 
     //golf ball
     game_window.draw(golf_ball);
@@ -430,5 +502,6 @@ void Game::render() {
         game_window.draw(power_meter_foreground);
         game_window.draw(arrow);
     }
+
     game_window.display();
 }

@@ -16,6 +16,7 @@ class Game{
         void update_power_meter(sf::Vector2f drag_vector);
         void sand_collision();
         void water_collision();
+        void wind_collision();
     private:
         //window
         sf::RenderWindow game_window;
@@ -72,6 +73,17 @@ class Game{
         float water_scale_y;
         float water_desired_width;
         float water_desired_height;
+
+        //for tree texture
+        sf::Image wind_image;
+        sf::Texture wind_texture;
+        sf::Sprite wind_sprite;
+        sf::Vector2u wind_texture_size;
+        float wind_scale_x;
+        float wind_scale_y;
+        float wind_desired_width;
+        float wind_desired_height;
+
 };
 
 class Rectangle{

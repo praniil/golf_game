@@ -203,9 +203,10 @@ void Game::run() {
                                     distance_drag.y = -100.0f;
                                 }
                                 golf_ball_velocity = -distance_drag * dragscale;  
-                                std::cout << "golf ball vel x: " << golf_ball_velocity.x << std::endl;                     
+                                // std::cout << "golf ball vel x: " << golf_ball_velocity.x << std::endl;                     
                                 isDragging = false;
                                 shot_count++;
+                                std::cout << shot_count << std::endl;
                             }
                         }
                     }
@@ -364,6 +365,9 @@ void Game::water_collision() {
                     golf_ball.setPosition(golf_ball.getPosition().x , golf_ball.getPosition().y + dis_bottom + 3 * golf_ball.getRadius());
                 }
             }
+            //shot count increases by 1 as a penalty
+            shot_count++;
+            // std::cout << shot_count << std::endl;
         }    
     }
 }
@@ -372,7 +376,7 @@ void Game::wind_collision() {
     if(wind_sprite.getGlobalBounds().intersects(golf_ball.getGlobalBounds())) {
        int random_number;
        random_number = rand() % 8;
-       std::cout << "random number" << random_number << std::endl; 
+    //    std::cout << "random number" << random_number << std::endl; 
        switch (random_number)
        {
         case 0:
@@ -396,15 +400,15 @@ void Game::wind_collision() {
         break;
 
         case 5:
-            golf_ball_velocity.x = golf_ball_velocity.x - 3.8f;
+            golf_ball_velocity.x = golf_ball_velocity.x - 4.8f;
         break;
 
         case 6: 
-            golf_ball_velocity.y = golf_ball_velocity.y + 0.8f;
+            golf_ball_velocity.y = golf_ball_velocity.y + 4.8f;
         break;
 
         case 7:
-            golf_ball_velocity.y = golf_ball_velocity.y - 6.8f;
+            golf_ball_velocity.y = golf_ball_velocity.y - 4.8f;
         break;
         
         default:

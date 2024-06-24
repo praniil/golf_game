@@ -84,6 +84,10 @@ class Game{
         float wind_desired_width;
         float wind_desired_height;
 
+        //draw shot_count text
+        sf::Text shot_count_text;
+        sf::Font shot_count_font;
+
 };
 
 class Rectangle{

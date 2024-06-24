@@ -99,6 +99,18 @@ Game :: Game() {
     wind_scale_x = wind_desired_width / wind_texture.getSize().x;
     wind_scale_y = wind_desired_height / wind_texture.getSize().y;
     wind_sprite.setScale(wind_scale_x, wind_scale_y);
+
+    std::cout << "top" << std::endl;
+    //shot count text
+    if (!shot_count_font.loadFromFile("/home/pranil/cppProjects/games_dev/golf_game/ARIBL0.ttf")) {
+        std::cout << "GG" << std::endl;
+    }
+    // shot_count_font.loadFromFile("/home/pranil/cppProjects/games_dev/golf_game/Arial.ttf");
+    shot_count_text.setString("shot_count: " + std::to_string(shot_count));
+    shot_count_text.setCharacterSize(24);
+    shot_count_text.setFillColor(sf::Color::White);
+    shot_count_text.setPosition(100, 100);
+    std::cout << "top" << std::endl;
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -507,5 +519,6 @@ void Game::render() {
         game_window.draw(arrow);
     }
 
+    game_window.draw(shot_count_text);
     game_window.display();
 }

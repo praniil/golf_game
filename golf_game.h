@@ -17,6 +17,8 @@ class Game{
         void sand_collision();
         void water_collision();
         void wind_collision();
+        void update_score();
+        void update_least_shot_count();
     private:
         //window
         sf::RenderWindow game_window;
@@ -87,6 +89,9 @@ class Game{
         //draw shot_count text
         sf::Text shot_count_text;
         sf::Font shot_count_font;
+
+        //draw least shout count
+        sf::Text least_shot_count_text;
 
 };
 

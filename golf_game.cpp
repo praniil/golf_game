@@ -23,6 +23,7 @@ sf::RectangleShape rect_medium = rec_medium.set_size();
 Rectangle rec_large(sf::Vector2f(40.f, 350.f));
 sf::RectangleShape rect_large = rec_large.set_size();
 
+
 Game :: Game() {
     //game window config
     sf::VideoMode desktop_size = sf::VideoMode::getDesktopMode();
@@ -100,17 +101,28 @@ Game :: Game() {
     wind_scale_y = wind_desired_height / wind_texture.getSize().y;
     wind_sprite.setScale(wind_scale_x, wind_scale_y);
 
-    std::cout << "top" << std::endl;
     //shot count text
-    if (!shot_count_font.loadFromFile("/home/pranil/cppProjects/games_dev/golf_game/ARIBL0.ttf")) {
+    if (!shot_count_font.loadFromFile("/home/pranil/cppProjects/games_dev/golf_game/Arial.ttf")) {
         std::cout << "GG" << std::endl;
     }
-    // shot_count_font.loadFromFile("/home/pranil/cppProjects/games_dev/golf_game/Arial.ttf");
-    shot_count_text.setString("shot_count: " + std::to_string(shot_count));
+    shot_count_text.setFont(shot_count_font);
+    shot_count_text.setString("shot count: " + std::to_string(shot_count));
     shot_count_text.setCharacterSize(24);
-    shot_count_text.setFillColor(sf::Color::White);
-    shot_count_text.setPosition(100, 100);
-    std::cout << "top" << std::endl;
+    shot_count_text.setFillColor(sf::Color::Black);
+    shot_count_text.setPosition(0, 0);
+
+    //read least shout count file
+    std::ifstream least_count_file("least_shot_count.txt");
+    if (least_count_file.is_open()) {
+        least_count_file >> least_shots_count;
+    }
+
+    least_shot_count_text.setFont(shot_count_font);
+    least_shot_count_text.setString("least shot count: " + std::to_string(least_shots_count));
+    least_shot_count_text.setCharacterSize(24);
+    least_shot_count_text.setFillColor(sf::Color::Black);
+    least_shot_count_text.setPosition(500, 0);
+
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {
@@ -217,7 +229,8 @@ void Game::run() {
                                 golf_ball_velocity = -distance_drag * dragscale;  
                                 // std::cout << "golf ball vel x: " << golf_ball_velocity.x << std::endl;                     
                                 isDragging = false;
-                                shot_count++;
+                                shot_count = shot_count + 1;
+                                update_score();
                                 std::cout << shot_count << std::endl;
                             }
                         }
@@ -300,6 +313,7 @@ void Game::update() {
         }
         if (shot_count < least_shots_count) {
             least_shots_count = shot_count;
+            update_least_shot_count();
             std::ofstream least_count_file("least_shot_count.txt");
 
             if(least_count_file.is_open()) {
@@ -308,6 +322,10 @@ void Game::update() {
         }
         game_window.close();
     }
+}
+
+void Game:: update_least_shot_count() {
+    least_shot_count_text.setString("shot count: " + std::to_string(least_shots_count));
 }
 
 void Game::handle_collision () {
@@ -378,10 +396,15 @@ void Game::water_collision() {
                 }
             }
             //shot count increases by 1 as a penalty
-            shot_count++;
+            shot_count = shot_count + 1;
+            update_score();
             // std::cout << shot_count << std::endl;
         }    
     }
+}
+
+void Game::update_score() {
+    shot_count_text.setString("shot count: " + std::to_string(shot_count));
 }
 
 void Game::wind_collision() {
@@ -433,6 +456,7 @@ void Game::wind_collision() {
 void Game::render() {
     game_window.clear(sf::Color::Green);
     game_window.draw(golf_hole);
+    
     //sand texture 1
     sand_sprite.setPosition(655.0f, 455.0f);
     sand_collision();
@@ -512,13 +536,13 @@ void Game::render() {
     rect_large.setFillColor(sf::Color::Cyan);
     rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
     game_window.draw(rect_large);
+    game_window.draw(shot_count_text);
+    game_window.draw(least_shot_count_text);
 
     if(isDragging) {
         game_window.draw(power_meter);
         game_window.draw(power_meter_foreground);
         game_window.draw(arrow);
     }
-
-    game_window.draw(shot_count_text);
     game_window.display();
 }

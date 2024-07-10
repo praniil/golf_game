@@ -178,6 +178,7 @@ void Rectangle::manage_collision_effect(sf::RectangleShape &rectangle, sf::Circl
 
 void Game::run() {
     while(game_window.isOpen()) {
+        golf_ball.setFillColor(sf::Color::White);
         sf::Event event;
         while(game_window.pollEvent(event)) {
                 if(golf_ball_velocity.x >= 0.01f || golf_ball_velocity.y >= 0.01f) {

@@ -46,7 +46,8 @@ Game :: Game() {
     //golf hole position
     golf_hole_pos_x = game_window.getSize().x - 10 * golf_ball_diameter;
     golf_hole_pos_y = game_window.getSize().y / 10;
-    golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
+    // golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
+    golf_hole.setPosition(golf_ball_pos_x + 20, golf_ball_pos_y + 20);
 
     //dragging attribute
     isDragging = false;
@@ -111,6 +112,13 @@ Game :: Game() {
     shot_count_text.setFillColor(sf::Color::Black);
     shot_count_text.setPosition(0, 0);
 
+    //game over text
+    game_over_text.setFont(shot_count_font);
+    game_over_text.setString("You Did It. \n Shot Count: " + std::to_string(shot_count));
+    game_over_text.setCharacterSize(70);
+    game_over_text.setFillColor(sf::Color::White);
+    game_over_text.setPosition(game_window.getSize().x /3, game_window.getSize().y /2);
+
     //read least shout count file
     std::ifstream least_count_file("least_shot_count.txt");
     if (least_count_file.is_open()) {
@@ -118,7 +126,7 @@ Game :: Game() {
     }
 
     least_shot_count_text.setFont(shot_count_font);
-    least_shot_count_text.setString("least shot count: " + std::to_string(least_shots_count));
+    // least_shot_count_text.setString("least shot count: " + std::to_string(least_shots_count));
     least_shot_count_text.setCharacterSize(24);
     least_shot_count_text.setFillColor(sf::Color::Black);
     least_shot_count_text.setPosition(500, 0);
@@ -312,7 +320,7 @@ void Game::update() {
         if (least_count_file.is_open()) {
             least_count_file >> least_shots_count;
         }
-        if (shot_count < least_shots_count) {
+        if (shot_count < least_shots_count && shot_count > 0) {
             least_shots_count = shot_count;
             update_least_shot_count();
             std::ofstream least_count_file("least_shot_count.txt");
@@ -321,12 +329,11 @@ void Game::update() {
                 least_count_file << least_shots_count;
             }
         }
-        game_window.close();
     }
 }
 
 void Game:: update_least_shot_count() {
-    least_shot_count_text.setString("shot count: " + std::to_string(least_shots_count));
+    least_shot_count_text.setString("least shot count: " + std::to_string(least_shots_count));
 }
 
 void Game::handle_collision () {
@@ -544,6 +551,13 @@ void Game::render() {
         game_window.draw(power_meter);
         game_window.draw(power_meter_foreground);
         game_window.draw(arrow);
+    }
+    if(inHole == true) {
+        game_over_text.setString("You Did It. \n Shot Count: " + std::to_string(shot_count));
+        game_window.draw(game_over_text);
+        game_window.display();
+        sf::sleep(sf::seconds(2.0f));
+        game_window.close();    
     }
     game_window.display();
 }

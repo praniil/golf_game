@@ -9,6 +9,7 @@ class Game{
         void render();
         void update();
         void handle_collision();
+        void reset();
         void handle_wall_collision();
         float distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2);
         sf::Vector2f normalize(sf::Vector2f &source);
@@ -92,6 +93,7 @@ class Game{
 
         //draw least shout count
         sf::Text least_shot_count_text;
+        sf::Text game_over_text;
 
 };
 

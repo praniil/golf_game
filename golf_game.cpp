@@ -127,6 +127,17 @@ Game :: Game() {
     best_score_text.setFillColor(sf::Color::White);
     best_score_text.setPosition(game_window.getSize().x /3, game_window.getSize().y /3);
 
+    //exit button
+    exit_button.setFillColor(sf::Color::White);
+    exit_button.setSize(sf::Vector2f(40, 20));
+    exit_button.setPosition(game_window.getSize().x - 50, 10);
+
+    exit_button_text.setFont(shot_count_font);
+    exit_button_text.setString("Exit");
+    exit_button_text.setCharacterSize(15);
+    exit_button_text.setFillColor(sf::Color::Black);
+    exit_button_text.setPosition(exit_button.getPosition().x + 5, exit_button.getPosition().y + 2);
+
 
     //read least shout count file
     std::ifstream least_count_file("least_shot_count.txt");
@@ -567,8 +578,10 @@ void Game::render() {
         best_score_text.setString("Best Score: " + std::to_string(least_shots_count));
         game_window.draw(game_over_text);
         game_window.draw(best_score_text);
+        game_window.draw(exit_button);
+        game_window.draw(exit_button_text);
         game_window.display();
-        sf::sleep(sf::seconds(2.0f));
+        sf::sleep(sf::seconds(3.0f));
         game_window.close();    
     }
     game_window.display();

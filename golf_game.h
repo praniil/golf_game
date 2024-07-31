@@ -36,6 +36,10 @@ class Game{
         sf::RectangleShape arrow;
         float arrow_width, arrow_height;
 
+        //exit button
+        sf::RectangleShape exit_button;
+        sf::Text exit_button_text;
+
         //dragging
         bool isDragging;
         sf::Vector2f dragStartPos;

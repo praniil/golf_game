@@ -97,8 +97,12 @@ class Game{
 
         //draw least shout count
         sf::Text least_shot_count_text;
+        //draw game over text
         sf::Text game_over_text;
+        //draw best score text
         sf::Text best_score_text;
+        //if scores high score
+        sf::Text congratulation_text;
 
 };
 

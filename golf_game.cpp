@@ -47,11 +47,11 @@ Game :: Game() {
     //golf hole position
     golf_hole_pos_x = game_window.getSize().x - 10 * golf_ball_diameter;
     golf_hole_pos_y = game_window.getSize().y / 10;
-    golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
-    /* 
-    test golf hole position
+    // golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
+    
+    // test golf hole position
     golf_hole.setPosition(golf_ball_pos_x + 20, golf_ball_pos_y + 20);
-    */
+    
 
     //dragging attribute
     isDragging = false;
@@ -129,6 +129,13 @@ Game :: Game() {
     best_score_text.setCharacterSize(70);
     best_score_text.setFillColor(sf::Color::White);
     best_score_text.setPosition(game_window.getSize().x /3, game_window.getSize().y /3);
+
+    //congratulation text
+    congratulation_text.setFont(shot_count_font);
+    congratulation_text.setString("Congratulations. You did it!");
+    congratulation_text.setCharacterSize(100);
+    congratulation_text.setFillColor(sf::Color::White);
+    congratulation_text.setPosition(20, 20);
 
     //exit button
     exit_button.setFillColor(sf::Color::White);
@@ -579,6 +586,9 @@ void Game::render() {
         game_window.clear(sf::Color::Black);
         game_over_text.setString("Your Score: " + std::to_string(shot_count));
         best_score_text.setString("Best Score: " + std::to_string(least_shots_count));
+        if (shot_count == least_shots_count) {
+            game_window.draw(congratulation_text);
+        }
         game_window.draw(game_over_text);
         game_window.draw(best_score_text);
         game_window.draw(exit_button);

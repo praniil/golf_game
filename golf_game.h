@@ -94,6 +94,7 @@ class Game{
         //draw least shout count
         sf::Text least_shot_count_text;
         sf::Text game_over_text;
+        sf::Text best_score_text;
 
 };
 

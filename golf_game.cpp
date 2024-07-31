@@ -10,6 +10,7 @@ const int golf_ball_diameter = 10;
 const float dragscale = 0.2f;
 const float damping = 0.99f;
 int drag_angle;
+bool gameStart = false;
 
 //small rectange
 Rectangle rec_small(sf::Vector2f(35.f, 150.f));
@@ -118,6 +119,14 @@ Game :: Game() {
     game_over_text.setCharacterSize(70);
     game_over_text.setFillColor(sf::Color::White);
     game_over_text.setPosition(game_window.getSize().x /3, game_window.getSize().y /2);
+
+    //best score text
+    best_score_text.setFont(shot_count_font);
+    best_score_text.setString("Best score: " + std::to_string(least_shots_count));
+    best_score_text.setCharacterSize(70);
+    best_score_text.setFillColor(sf::Color::White);
+    best_score_text.setPosition(game_window.getSize().x /3, game_window.getSize().y /3);
+
 
     //read least shout count file
     std::ifstream least_count_file("least_shot_count.txt");
@@ -553,8 +562,11 @@ void Game::render() {
         game_window.draw(arrow);
     }
     if(inHole == true) {
-        game_over_text.setString("You Did It. \n Shot Count: " + std::to_string(shot_count));
+        game_window.clear(sf::Color::Black);
+        game_over_text.setString("You Did It.\nShot Count: " + std::to_string(shot_count));
+        best_score_text.setString("Best Score: " + std::to_string(least_shots_count));
         game_window.draw(game_over_text);
+        game_window.draw(best_score_text);
         game_window.display();
         sf::sleep(sf::seconds(2.0f));
         game_window.close();    

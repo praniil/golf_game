@@ -47,8 +47,11 @@ Game :: Game() {
     //golf hole position
     golf_hole_pos_x = game_window.getSize().x - 10 * golf_ball_diameter;
     golf_hole_pos_y = game_window.getSize().y / 10;
-    // golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
+    golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
+    /* 
+    test golf hole position
     golf_hole.setPosition(golf_ball_pos_x + 20, golf_ball_pos_y + 20);
+    */
 
     //dragging attribute
     isDragging = false;
@@ -574,15 +577,27 @@ void Game::render() {
     }
     if(inHole == true) {
         game_window.clear(sf::Color::Black);
-        game_over_text.setString("You Did It.\nShot Count: " + std::to_string(shot_count));
+        game_over_text.setString("Your Score: " + std::to_string(shot_count));
         best_score_text.setString("Best Score: " + std::to_string(least_shots_count));
         game_window.draw(game_over_text);
         game_window.draw(best_score_text);
         game_window.draw(exit_button);
         game_window.draw(exit_button_text);
         game_window.display();
-        sf::sleep(sf::seconds(3.0f));
-        game_window.close();    
+        sf::Event event;
+        while(game_window.pollEvent(event)) {
+            if(event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2f mousePosition = game_window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    // std::cout << mousePosition.x << std::endl;
+                    if(exit_button.getGlobalBounds().contains(mousePosition)) {
+                        game_window.close();
+                    }
+                }
+            }
+        }
+        // sf::sleep(sf::seconds(3.0f));
+        // game_window.close();    
     }
     game_window.display();
 }

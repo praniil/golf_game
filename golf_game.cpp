@@ -47,10 +47,10 @@ Game :: Game() {
     //golf hole position
     golf_hole_pos_x = game_window.getSize().x - 10 * golf_ball_diameter;
     golf_hole_pos_y = game_window.getSize().y / 10;
-    // golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
+    golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
     
     // test golf hole position
-    golf_hole.setPosition(golf_ball_pos_x + 20, golf_ball_pos_y + 20);
+    // golf_hole.setPosition(golf_ball_pos_x + 20, golf_ball_pos_y + 20);
     
 
     //dragging attribute
@@ -65,7 +65,7 @@ Game :: Game() {
     arrow.setOutlineThickness(0);
 
     inHole = false;
-
+    inGameWindow = true;
     shot_count = 0;
 
     power_meter_width = 100.0f;
@@ -282,6 +282,16 @@ void Game::run() {
     }
 }
 
+void Game::reset() {
+    if (inGameWindow == true) {
+        golf_ball_velocity = sf::Vector2f(0, 0);
+        golf_ball.setPosition(golf_ball_pos_x, golf_ball_pos_y);
+        shot_count = 0;
+        render();
+        run();
+    }
+}
+
 void Game::update_arrow() {
     arrow.setFillColor(sf::Color::Black);
     arrow.setPosition(golf_ball.getPosition().x + golf_ball.getRadius() -1, golf_ball.getPosition().y + golf_ball.getRadius() -1);
@@ -492,98 +502,100 @@ void Game::wind_collision() {
 }
 
 void Game::render() {
-    game_window.clear(sf::Color::Green);
-    game_window.draw(golf_hole);
+        game_window.clear(sf::Color::Green);
+        game_window.draw(golf_hole);
+        
+        //sand texture 1
+        sand_sprite.setPosition(655.0f, 455.0f);
+        sand_collision();
+        game_window.draw(sand_sprite);
+        //sand texture 2
+        sand_sprite.setPosition(780.0f, 15.0f);
+        sand_collision();
+        game_window.draw(sand_sprite);
+
+        //sand texture 3
+        sand_sprite.setPosition(1180.0f, 200.0f);
+        sand_collision();
+        game_window.draw(sand_sprite);
+
+        //water texture 1
+        water_sprite.setPosition(100.0f, 75.0f);
+        water_collision();
+        game_window.draw(water_sprite);
+
+        //water texture 2
+        water_sprite.setPosition(300.0f, 700.0f);
+        water_collision();
+        game_window.draw(water_sprite);
+
+        //water texture 3
+        water_sprite.setPosition(870.0f, 700.0f);
+        water_collision();
+        game_window.draw(water_sprite);
+
+        //wind_texture 1
+        wind_sprite.setPosition(450.0f, 300.0f);
+        wind_collision();
+        game_window.draw(wind_sprite);
+
+        //wind_texture 2
+        wind_sprite.setPosition(850.0f, 350.0f);
+        wind_collision();
+        game_window.draw(wind_sprite);
+
+        //wind_texture 3
+        wind_sprite.setPosition(400.0f, 50.0f);
+        wind_collision();
+        game_window.draw(wind_sprite);
+
+        //golf ball
+        game_window.draw(golf_ball);
+
+        // Small obstacles
+        rect_small.setPosition(400.0f, 220.0f);
+        rect_small.setFillColor(sf::Color::Black);
+        rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
+        game_window.draw(rect_small);
+
+        rect_small.setPosition(600.0f, 40.0f); // Slightly shifted to create a gap
+        rect_small.setFillColor(sf::Color::Black);
+        rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
+        game_window.draw(rect_small);
+
+        // Medium obstacles
+        rect_medium.setPosition(600.0f, 500.0f); // Positioned lower
+        rect_medium.setFillColor(sf::Color::Red);
+        rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
+        game_window.draw(rect_medium);
+
+        rect_medium.setPosition(750.0f, 230.0f); // Creating a gap between medium obstacles
+        rect_medium.setFillColor(sf::Color::Red);
+        rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
+        game_window.draw(rect_medium);
+
+        // Large obstacles
+        rect_large.setPosition(1175.0f, 400.0f); // Positioned centrally but higher
+        rect_large.setFillColor(sf::Color::Cyan);
+        rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+        game_window.draw(rect_large);
+
+        rect_large.setPosition(1050.0f, 50.0f); // Creating a narrow path
+        rect_large.setFillColor(sf::Color::Cyan);
+        rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
+        game_window.draw(rect_large);
+        game_window.draw(shot_count_text);
+        game_window.draw(least_shot_count_text);
+
+        if(isDragging) {
+            game_window.draw(power_meter);
+            game_window.draw(power_meter_foreground);
+            game_window.draw(arrow);
+        }
     
-    //sand texture 1
-    sand_sprite.setPosition(655.0f, 455.0f);
-    sand_collision();
-    game_window.draw(sand_sprite);
-    //sand texture 2
-    sand_sprite.setPosition(780.0f, 15.0f);
-    sand_collision();
-    game_window.draw(sand_sprite);
-
-    //sand texture 3
-    sand_sprite.setPosition(1180.0f, 200.0f);
-    sand_collision();
-    game_window.draw(sand_sprite);
-
-    //water texture 1
-    water_sprite.setPosition(100.0f, 75.0f);
-    water_collision();
-    game_window.draw(water_sprite);
-
-    //water texture 2
-    water_sprite.setPosition(300.0f, 700.0f);
-    water_collision();
-    game_window.draw(water_sprite);
-
-    //water texture 3
-    water_sprite.setPosition(870.0f, 700.0f);
-    water_collision();
-    game_window.draw(water_sprite);
-
-    //wind_texture 1
-    wind_sprite.setPosition(450.0f, 300.0f);
-    wind_collision();
-    game_window.draw(wind_sprite);
-
-    //wind_texture 2
-    wind_sprite.setPosition(850.0f, 350.0f);
-    wind_collision();
-    game_window.draw(wind_sprite);
-
-    //wind_texture 3
-    wind_sprite.setPosition(400.0f, 50.0f);
-    wind_collision();
-    game_window.draw(wind_sprite);
-
-    //golf ball
-    game_window.draw(golf_ball);
-
-    // Small obstacles
-    rect_small.setPosition(400.0f, 220.0f);
-    rect_small.setFillColor(sf::Color::Black);
-    rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_small);
-
-    rect_small.setPosition(600.0f, 40.0f); // Slightly shifted to create a gap
-    rect_small.setFillColor(sf::Color::Black);
-    rec_small.manage_collision_effect(rect_small, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_small);
-
-    // Medium obstacles
-    rect_medium.setPosition(600.0f, 500.0f); // Positioned lower
-    rect_medium.setFillColor(sf::Color::Red);
-    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_medium);
-
-    rect_medium.setPosition(750.0f, 230.0f); // Creating a gap between medium obstacles
-    rect_medium.setFillColor(sf::Color::Red);
-    rec_medium.manage_collision_effect(rect_medium, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_medium);
-
-    // Large obstacles
-    rect_large.setPosition(1175.0f, 400.0f); // Positioned centrally but higher
-    rect_large.setFillColor(sf::Color::Cyan);
-    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_large);
-
-    rect_large.setPosition(1050.0f, 50.0f); // Creating a narrow path
-    rect_large.setFillColor(sf::Color::Cyan);
-    rec_large.manage_collision_effect(rect_large, golf_ball, golf_ball_velocity);
-    game_window.draw(rect_large);
-    game_window.draw(shot_count_text);
-    game_window.draw(least_shot_count_text);
-
-    if(isDragging) {
-        game_window.draw(power_meter);
-        game_window.draw(power_meter_foreground);
-        game_window.draw(arrow);
-    }
     if(inHole == true) {
         game_window.clear(sf::Color::Black);
+        inGameWindow = false;
         game_over_text.setString("Your Score: " + std::to_string(shot_count));
         best_score_text.setString("Best Score: " + std::to_string(least_shots_count));
         if (shot_count == least_shots_count) {
@@ -601,7 +613,10 @@ void Game::render() {
                     sf::Vector2f mousePosition = game_window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
                     // std::cout << mousePosition.x << std::endl;
                     if(exit_button.getGlobalBounds().contains(mousePosition)) {
-                        game_window.close();
+                        // game_window.close();
+                        inHole = false;
+                        inGameWindow = true;
+                        reset();
                     }
                 }
             }

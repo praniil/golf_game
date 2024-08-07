@@ -8,8 +8,8 @@ class Game{
         void run();
         void render();
         void update();
-        void handle_collision();
         void reset();
+        void handle_collision();
         void handle_wall_collision();
         float distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2);
         sf::Vector2f normalize(sf::Vector2f &source);
@@ -48,6 +48,7 @@ class Game{
 
         bool show_arrow;
         bool inHole;
+        bool inGameWindow;
 
         //shot count
         int shot_count;

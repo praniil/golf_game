@@ -148,6 +148,17 @@ Game :: Game() {
     exit_button_text.setFillColor(sf::Color::Black);
     exit_button_text.setPosition(exit_button.getPosition().x + 5, exit_button.getPosition().y + 2);
 
+    //exit button
+    restart_button.setFillColor(sf::Color::White);
+    restart_button.setSize(sf::Vector2f(60, 20));
+    restart_button.setPosition(game_window.getSize().x - 70, 40);
+
+    restart_button_text.setFont(shot_count_font);
+    restart_button_text.setString("Restart");
+    restart_button_text.setCharacterSize(15);
+    restart_button_text.setFillColor(sf::Color::Black);
+    restart_button_text.setPosition(restart_button.getPosition().x + 5, restart_button.getPosition().y + 2);
+
 
     //read least shout count file
     std::ifstream least_count_file("least_shot_count.txt");
@@ -286,8 +297,9 @@ void Game::reset() {
     if (inGameWindow == true) {
         golf_ball_velocity = sf::Vector2f(0, 0);
         golf_ball.setPosition(golf_ball_pos_x, golf_ball_pos_y);
-        shot_count = 0;
         render();
+        shot_count = 0;
+        update_score();
         run();
     }
 }
@@ -605,6 +617,8 @@ void Game::render() {
         game_window.draw(best_score_text);
         game_window.draw(exit_button);
         game_window.draw(exit_button_text);
+        game_window.draw(restart_button);
+        game_window.draw(restart_button_text);
         game_window.display();
         sf::Event event;
         while(game_window.pollEvent(event)) {
@@ -613,7 +627,12 @@ void Game::render() {
                     sf::Vector2f mousePosition = game_window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
                     // std::cout << mousePosition.x << std::endl;
                     if(exit_button.getGlobalBounds().contains(mousePosition)) {
-                        // game_window.close();
+                        game_window.close();
+                        // inHole = false;
+                        // inGameWindow = true;
+                        // reset();
+                    }
+                    if(restart_button.getGlobalBounds().contains(mousePosition)) {
                         inHole = false;
                         inGameWindow = true;
                         reset();

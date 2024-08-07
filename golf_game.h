@@ -40,6 +40,10 @@ class Game{
         sf::RectangleShape exit_button;
         sf::Text exit_button_text;
 
+        //restart game button
+        sf::RectangleShape restart_button;
+        sf::Text restart_button_text;
+
         //dragging
         bool isDragging;
         sf::Vector2f dragStartPos;

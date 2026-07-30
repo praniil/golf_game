@@ -26,10 +26,45 @@ sf::RectangleShape rect_large = rec_large.set_size();
 
 
 Game :: Game() {
+    // initialize game components
+    init_game_window();
+    // initialize golf ball attributes;
+    init_golf_ball_attributes();
+    // initialize golf hole attributes
+    init_golf_hole_attributes();
+    //initialize arrow attributes
+    init_arrow_attributes();
+    //initialize exit button attributes
+    init_exit_button();
+    // initialize restart button attributes
+    init_restart_button();
+    // initialized counts attributes
+    init_game_counts();
+    // initialize power meter
+    init_power_meter();
+    // initialize sand textures
+    init_sand_textures();
+    // initialize water textures
+    init_water_textures();
+    // initialize tree textures
+    init_tree_textures();
+    //initialize count texts
+    init_game_texts();
+}
+
+void Game::init_game_window(){
+    // game window init or not
+    inGameWindow = true;
     //game window config
     sf::VideoMode desktop_size = sf::VideoMode::getDesktopMode();
     game_window.create(desktop_size, "GOLF_GAME", sf::Style::Fullscreen);
     game_window.setFramerateLimit(60);
+}
+
+void Game::init_golf_ball_attributes(){    
+    // ball in hole or not
+    inHole = false;
+
     //golf ball attribute
     golf_ball.setRadius(golf_ball_diameter);
     golf_ball.setFillColor(sf::Color::White);
@@ -39,20 +74,21 @@ Game :: Game() {
     golf_ball_pos_x = 20 * golf_ball_diameter;
     golf_ball_pos_y = game_window.getSize().y - 20 * golf_ball_diameter;
     golf_ball.setPosition(golf_ball_pos_x, golf_ball_pos_y);
+}
 
+void Game::init_golf_hole_attributes(){
     //golf hole attribute
     golf_hole.setRadius(golf_ball_diameter * 1.52);
     golf_hole.setFillColor(sf::Color::Black);
     golf_hole.setPointCount(30);
+
     //golf hole position
     golf_hole_pos_x = game_window.getSize().x - 10 * golf_ball_diameter;
     golf_hole_pos_y = game_window.getSize().y / 10;
     golf_hole.setPosition(golf_hole_pos_x, golf_hole_pos_y);
-    
-    // test golf hole position
-    // golf_hole.setPosition(golf_ball_pos_x + 20, golf_ball_pos_y + 20);
-    
+}
 
+void Game::init_arrow_attributes(){
     //dragging attribute
     isDragging = false;
 
@@ -63,15 +99,43 @@ Game :: Game() {
     arrow.setFillColor(sf::Color::Blue);
     arrow.setOrigin(-0, arrow.getSize().y );
     arrow.setOutlineThickness(0);
+}
 
-    inHole = false;
-    inGameWindow = true;
+void Game::init_exit_button(){
+    //exit button
+    exit_button.setFillColor(sf::Color::White);
+    exit_button.setSize(sf::Vector2f(40, 20));
+    exit_button.setPosition(game_window.getSize().x - 50, 10);
+
+    exit_button_text.setFont(shot_count_font);
+    exit_button_text.setString("Exit");
+    exit_button_text.setCharacterSize(15);
+    exit_button_text.setFillColor(sf::Color::Black);
+    exit_button_text.setPosition(exit_button.getPosition().x + 5, exit_button.getPosition().y + 2);
+}
+
+void Game::init_restart_button(){
+    //restart button
+    restart_button.setFillColor(sf::Color::White);
+    restart_button.setSize(sf::Vector2f(60, 20));
+    restart_button.setPosition(game_window.getSize().x - 70, 40);
+
+    restart_button_text.setFont(shot_count_font);
+    restart_button_text.setString("Restart");
+    restart_button_text.setCharacterSize(15);
+    restart_button_text.setFillColor(sf::Color::Black);
+    restart_button_text.setPosition(restart_button.getPosition().x + 5, restart_button.getPosition().y + 2);
+}
+
+void Game::init_game_counts(){
     shot_count = 0;
-
+}
+void Game::init_power_meter(){
     power_meter_width = 100.0f;
     power_meter_height = 22.0f;
     power_meter.setSize(sf::Vector2f(power_meter_width + 6, power_meter_height));
-
+}
+void Game::init_sand_textures(){
     //sand texture
     sand_image.loadFromFile("sand_texture.jpg");
     sand_texture.loadFromImage(sand_image);
@@ -83,7 +147,9 @@ Game :: Game() {
     sand_scale_y = sand_desired_height / sand_texture_size.y;
     sand_sprite.setScale(sand_scale_x, sand_scale_y);
     sand_damping = 0.8f;
+}
 
+void Game::init_water_textures(){
     //water texture
     water_image.loadFromFile("water_texture.png");
     water_texture.loadFromImage(water_image);
@@ -94,7 +160,9 @@ Game :: Game() {
     water_scale_x = water_desired_width / water_texture.getSize().x;
     water_scale_y = water_desired_height / water_texture.getSize().y;
     water_sprite.setScale(water_scale_x, water_scale_y);
+}
 
+void Game::init_tree_textures(){
     //tree texture
     wind_image.loadFromFile("wind.jpg");
     wind_texture.loadFromImage(wind_image);
@@ -105,9 +173,11 @@ Game :: Game() {
     wind_scale_x = wind_desired_width / wind_texture.getSize().x;
     wind_scale_y = wind_desired_height / wind_texture.getSize().y;
     wind_sprite.setScale(wind_scale_x, wind_scale_y);
+}
 
+void Game::init_game_texts(){
     //shot count text
-    if (!shot_count_font.loadFromFile("/home/pranil/cppProjects/games_dev/golf_game/Arial.ttf")) {
+    if (!shot_count_font.loadFromFile("Arial.ttf")) {
         std::cout << "GG" << std::endl;
     }
     shot_count_text.setFont(shot_count_font);
@@ -137,29 +207,6 @@ Game :: Game() {
     congratulation_text.setFillColor(sf::Color::White);
     congratulation_text.setPosition(20, 20);
 
-    //exit button
-    exit_button.setFillColor(sf::Color::White);
-    exit_button.setSize(sf::Vector2f(40, 20));
-    exit_button.setPosition(game_window.getSize().x - 50, 10);
-
-    exit_button_text.setFont(shot_count_font);
-    exit_button_text.setString("Exit");
-    exit_button_text.setCharacterSize(15);
-    exit_button_text.setFillColor(sf::Color::Black);
-    exit_button_text.setPosition(exit_button.getPosition().x + 5, exit_button.getPosition().y + 2);
-
-    //exit button
-    restart_button.setFillColor(sf::Color::White);
-    restart_button.setSize(sf::Vector2f(60, 20));
-    restart_button.setPosition(game_window.getSize().x - 70, 40);
-
-    restart_button_text.setFont(shot_count_font);
-    restart_button_text.setString("Restart");
-    restart_button_text.setCharacterSize(15);
-    restart_button_text.setFillColor(sf::Color::Black);
-    restart_button_text.setPosition(restart_button.getPosition().x + 5, restart_button.getPosition().y + 2);
-
-
     //read least shout count file
     std::ifstream least_count_file("least_shot_count.txt");
     if (least_count_file.is_open()) {
@@ -171,7 +218,6 @@ Game :: Game() {
     least_shot_count_text.setCharacterSize(24);
     least_shot_count_text.setFillColor(sf::Color::Black);
     least_shot_count_text.setPosition(500, 0);
-
 }
 
 float Game::distance_calculator(sf::Vector2f &p1, sf::Vector2f &p2) {

@@ -21,6 +21,20 @@ class Game{
         void update_score();
         void update_least_shot_count();
     private:
+        //initialize the game components
+        void init_game_window();
+        void init_golf_ball_attributes();
+        void init_golf_hole_attributes();
+        void init_arrow_attributes();
+        void init_exit_button();
+        void init_restart_button();
+        void init_game_counts();
+        void init_power_meter();
+        void init_sand_textures();
+        void init_water_textures();
+        void init_tree_textures();
+        void init_game_texts();
+
         //window
         sf::RenderWindow game_window;
 
@@ -108,7 +122,6 @@ class Game{
         sf::Text best_score_text;
         //if scores high score
         sf::Text congratulation_text;
-
 };
 
 class Rectangle{
